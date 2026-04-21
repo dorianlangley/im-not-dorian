@@ -25,12 +25,12 @@
             background-color: #f5f5dc; color: black; border-radius: 50px; transition: 0.3s;
         }
 
-        /* --- Chat com Scroll Melhorado --- */
+        /* --- Chat --- */
         #chat-container { 
             flex: 1; overflow-y: auto; padding: 20px; display: flex; 
             flex-direction: column; width: 100%; height: 60vh;
             scroll-behavior: smooth;
-            padding-bottom: 50px; /* Espaço extra para o "typing" não sumir */
+            padding-bottom: 100px; 
         }
         #chat-container::-webkit-scrollbar { width: 0px; }
 
@@ -40,54 +40,39 @@
         .bubble-left { background: #1a1a1a; color: #f5f5dc; padding: 12px 18px; border-radius: 18px 18px 18px 0; max-width: 80%; font-size: 0.95rem; }
         .bubble-right { background: #f5f5dc; color: black; padding: 12px 18px; border-radius: 18px 18px 0 18px; max-width: 80%; font-size: 0.95rem; }
         
-        #input-area { height: 100px; display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; border-top: 1px solid #eee; background: white; z-index: 20; }
-        .option-chip { background: #f5f5dc; padding: 12px 24px; border-radius: 25px; cursor: pointer; border: 1px solid transparent; }
-        .typing { font-style: italic; color: #aaa; font-size: 0.8rem; padding: 10px 20px; display: none; width: 100%; }
+        #input-area { height: 110px; display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; border-top: 1px solid #eee; background: white; z-index: 20; }
+        .option-chip { background: #f5f5dc; padding: 12px 24px; border-radius: 25px; cursor: pointer; border: 1px solid transparent; font-weight: 500; }
+        .typing { font-style: italic; color: #aaa; font-size: 0.8rem; padding: 10px 20px; display: none; }
 
         /* --- Jogo --- */
-        #game-stage { 
-            width: 100vw; /* Piso agora atravessa a tela toda */
-            height: 300px; 
-            border-bottom: 2px solid #1a1a1a; 
-            position: relative; 
-            overflow: hidden; 
-            background: #fff; 
-        }
-        #player { 
-            position: absolute; bottom: 0; left: 20%; width: 65px; height: 65px; z-index: 5;
-            transform-origin: bottom center;
-        }
+        #game-stage { width: 100vw; height: 320px; border-bottom: 3px solid #1a1a1a; position: relative; overflow: hidden; background: #fff; }
+        #player { position: absolute; bottom: 0; left: 15%; width: 65px; height: 65px; z-index: 5; transform-origin: bottom center; }
 
         .walking { animation: walkElastic 0.5s infinite alternate ease-in-out; }
-        @keyframes walkElastic { from { transform: rotate(-6deg); } to { transform: rotate(6deg); } }
+        @keyframes walkElastic { from { transform: rotate(-5deg) scaleY(1); } to { transform: rotate(5deg) scaleY(0.95); } }
 
-        /* Pulo com IMPACTO aumentado */
-        .jumping { animation: jumpCycle 0.7s ease-in-out; }
+        .jumping { animation: jumpCycle 0.75s cubic-bezier(0.45, 0.05, 0.55, 0.95); }
         @keyframes jumpCycle {
-            0% { transform: scale(1.5, 0.5); }   /* Amassa MUITO no começo */
-            30% { transform: scale(0.7, 1.4); }   /* Estica na subida */
+            0% { transform: scale(1.7, 0.3); }   /* Amassa MUITO no impulso */
+            25% { transform: scale(0.6, 1.6); }  /* Estica MUITO no ar */
             50% { transform: scale(1, 1); }
-            90% { transform: scale(1, 1); }
-            100% { transform: scale(1.4, 0.6); }  /* Amassa MUITO ao cair */
+            100% { transform: scale(1.7, 0.3); } /* Impacto pesado no chão */
         }
 
-        .hit-effect { 
-            filter: sepia(1) saturate(10) hue-rotate(-50deg) !important; 
-            animation: vibrate 0.2s linear infinite;
-        }
-        @keyframes vibrate {
-            0% { transform: translate(3px, 0); }
-            50% { transform: translate(-3px, 0); }
-            100% { transform: translate(3px, 0); }
+        .obstacle { position: absolute; bottom: 0; right: -60px; width: 45px; height: 45px; animation: jelly 0.8s infinite alternate; }
+        @keyframes jelly {
+            from { transform: scale(1, 1); }
+            to { transform: scale(1.2, 0.8); }
         }
 
-        .obstacle { position: absolute; bottom: 0; right: -50px; width: 35px; height: 35px; }
-        #countdown { font-size: 5rem; font-family: 'Cormorant Upright'; position: absolute; top: 20%; left: 50%; transform: translateX(-50%); z-index: 10; }
+        .hit-effect { filter: sepia(1) saturate(10) hue-rotate(-50deg) !important; animation: vibrate 0.2s linear 2; }
+        @keyframes vibrate { 0% { transform: translateX(5px); } 50% { transform: translateX(-5px); } 100% { transform: translateX(0); } }
 
-        /* --- Brilhos --- */
+        #countdown { font-size: 6rem; font-family: 'Cormorant Upright'; position: absolute; top: 20%; left: 50%; transform: translateX(-50%); z-index: 10; }
+
         .sparkle { position: absolute; width: 3px; height: 3px; background: #000; border-radius: 50%; pointer-events: none; animation: floatUp 5s linear forwards; }
         @keyframes floatUp { 0% { transform: translateY(100vh); opacity: 0.7; } 100% { transform: translateY(-10vh); opacity: 0; } }
-        @keyframes fadeInMsg { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeInMsg { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
@@ -104,7 +89,7 @@
     </div>
 
     <div id="game-wrapper">
-        <div id="game-info" style="text-align: center; margin-bottom: 10px; font-weight: 300; width: 100%;">Jump to keep moving</div>
+        <div id="game-info" style="text-align: center; margin-bottom: 10px; font-weight: 300;">W, Space or Tap to Jump</div>
         <div id="game-stage" onmousedown="playerJump()" ontouchstart="playerJump()">
             <div id="countdown"></div>
             <div id="player" class="walking"><img src="pfp.png" width="65" id="pfp-img" style="border-radius:10px;"></div>
@@ -169,7 +154,7 @@
                 addBubble('right', 'no! sorry');
                 setTimeout(() => {
                     typing.style.display = 'block';
-                    autoScroll();
+                    forceScroll();
                     setTimeout(() => {
                         typing.style.display = 'none';
                         addBubble('left', '...');
@@ -184,12 +169,12 @@
 
             if (m.side === 'left') {
                 typing.style.display = 'block';
-                autoScroll();
+                forceScroll();
                 setTimeout(() => {
                     typing.style.display = 'none';
                     addBubble('left', m.text);
-                    setTimeout(() => runScript(idx + 1), 600);
-                }, Math.max(900, m.text.length * 20));
+                    setTimeout(() => runScript(idx + 1), 700);
+                }, Math.max(1000, m.text.length * 20));
             } else if (m.side === 'choose') { displayOptions(m.options); }
             else if (m.side === 'right_auto') {
                 setTimeout(() => {
@@ -203,13 +188,12 @@
             const div = document.createElement('div'); div.className = `message msg-${side}`;
             div.innerHTML = `<div class="bubble-${side}">${text}</div>`;
             chatContainer.appendChild(div);
-            autoScroll();
+            forceScroll();
         }
 
-        function autoScroll() {
-            // Rola para o typing ou para a última mensagem com folga
+        function forceScroll() {
             chatContainer.scrollTo({
-                top: chatContainer.scrollHeight + 100,
+                top: chatContainer.scrollHeight + 200,
                 behavior: 'smooth'
             });
         }
@@ -228,7 +212,7 @@
                 };
                 inputArea.appendChild(btn);
             });
-            autoScroll();
+            forceScroll();
         }
 
         // --- Game Logic ---
@@ -259,7 +243,7 @@
             const p = document.getElementById('player');
             p.classList.remove('walking'); p.classList.add('jumping');
             
-            let b = 0, v = 17, g = 0.9;
+            let b = 0, v = 18, g = 0.95; 
             const jumpInterval = setInterval(() => {
                 v -= g; b += v;
                 if (b <= 0) {
@@ -279,13 +263,13 @@
             const stage = document.getElementById('game-stage');
             const obs = document.createElement('div');
             obs.className = 'obstacle';
-            obs.innerHTML = `<img src="obstaculo.png" width="35" onerror="this.style.background='black';">`;
+            obs.innerHTML = `<img src="obj.png" width="45" onerror="this.style.background='black'; border-radius:50%;">`;
             stage.appendChild(obs);
 
-            let pos = -50;
+            let pos = -60;
             const move = setInterval(() => {
                 if (!gameActive) { clearInterval(move); obs.remove(); return; }
-                pos += 8; obs.style.right = pos + 'px';
+                pos += 10; obs.style.right = pos + 'px';
 
                 const pRect = document.getElementById('player').getBoundingClientRect();
                 const oRect = obs.getBoundingClientRect();
@@ -296,10 +280,10 @@
                     }
                 }
 
-                if (pos > window.innerWidth + 50) {
+                if (pos > window.innerWidth + 100) {
                     clearInterval(move); obs.remove(); obsCount++;
-                    if (obsCount >= 10) { gameActive = false; changeScreen('game-wrapper', 'final-screen'); }
-                    else { setTimeout(spawnObs, Math.random() * 800 + 700); }
+                    if (obsCount >= 12) { gameActive = false; changeScreen('game-wrapper', 'final-screen'); }
+                    else { setTimeout(spawnObs, Math.random() * 500 + 300); }
                 }
             }, 20);
         }
