@@ -26,20 +26,13 @@
         }
 
         /* --- Chat --- */
-        #chat-container { 
-            flex: 1; overflow-y: auto; padding: 20px; display: flex; 
-            flex-direction: column; width: 100%; height: 55vh;
-            scroll-behavior: smooth;
-        }
-        #chat-container::-webkit-scrollbar { width: 0px; }
+        #chat-container { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; width: 100%; height: 55vh; scroll-behavior: smooth; }
         #anchor { height: 120px; width: 100%; flex-shrink: 0; }
-
         .message { margin-bottom: 20px; display: flex; opacity: 0; animation: fadeInMsg 0.5s forwards; }
         .msg-left { justify-content: flex-start; }
         .msg-right { justify-content: flex-end; }
         .bubble-left { background: #1a1a1a; color: #f5f5dc; padding: 14px 20px; border-radius: 20px 20px 20px 0; max-width: 80%; }
         .bubble-right { background: #f5f5dc; color: black; padding: 14px 20px; border-radius: 20px 20px 0 20px; max-width: 80%; }
-        
         #input-area { height: 120px; display: flex; align-items: center; justify-content: center; width: 100%; border-top: 1px solid #eee; background: white; z-index: 100; }
         .option-chip { background: #f5f5dc; padding: 14px 28px; border-radius: 30px; cursor: pointer; border: 1px solid #ddd; }
         .typing { font-style: italic; color: #aaa; font-size: 0.85rem; padding: 10px 0; margin-left: 20px; display: none; }
@@ -51,44 +44,26 @@
             display: flex; align-items: flex-end;
         }
         #player { position: absolute; bottom: 0; left: 15%; width: 70px; height: 70px; z-index: 10; transform-origin: bottom center; }
-        
-        #hit-text {
-            position: absolute; top: -45px; left: 50%; transform: translateX(-50%);
-            background: black; color: white; padding: 4px 12px; border-radius: 8px;
-            font-size: 0.75rem; font-weight: bold; opacity: 0; transition: 0.1s; white-space: nowrap; z-index: 20;
-        }
+        #hit-text { position: absolute; top: -45px; left: 50%; transform: translateX(-50%); background: black; color: white; padding: 4px 12px; border-radius: 8px; font-size: 0.75rem; font-weight: bold; opacity: 0; transition: 0.1s; white-space: nowrap; z-index: 20; }
+
+        /* Nuvens */
+        .cloud { position: absolute; opacity: 0.25; z-index: 1; pointer-events: none; }
 
         .walking { animation: walkElastic 0.4s infinite alternate ease-in-out; }
         @keyframes walkElastic { from { transform: rotate(-5deg); } to { transform: rotate(5deg); } }
 
-        /* Animação de Pulo Ativa */
         .jumping { animation: jumpCycle 0.6s forwards; }
-        @keyframes jumpCycle {
-            0% { transform: scale(1.6, 0.4); } 
-            20% { transform: scale(0.7, 1.4); }
-            50% { transform: scale(1, 1); }
-            100% { transform: scale(1, 1); }
-        }
+        @keyframes jumpCycle { 0% { transform: scale(1.6, 0.4); } 20% { transform: scale(0.7, 1.4); } 50% { transform: scale(1, 1); } 100% { transform: scale(1, 1); } }
 
-        /* NOVA: Animação de Impacto (Pouso) */
         .landed { animation: landImpact 0.25s forwards; }
-        @keyframes landImpact {
-            0% { transform: scale(1.7, 0.3); } /* Super amasso no contato */
-            50% { transform: scale(1.2, 0.8); } /* Recuperando devagar */
-            100% { transform: scale(1, 1); }     /* Volta ao normal */
-        }
+        @keyframes landImpact { 0% { transform: scale(1.7, 0.3); } 50% { transform: scale(1.2, 0.8); } 100% { transform: scale(1, 1); } }
 
-        .obstacle { 
-            position: absolute; bottom: 18px; right: -100px; 
-            width: 85px; height: 85px;
-            animation: floaty 0.8s infinite alternate ease-in-out; 
-        }
-        @keyframes floaty { from { transform: translateY(0); } to { transform: translateY(-10px); } }
-
+        .obstacle { position: absolute; bottom: 18px; right: -100px; width: 75px; height: 75px; z-index: 5; }
+        
         .hit-effect { filter: invert(20%) sepia(100%) saturate(500%) !important; animation: vibrate 0.1s linear 3; }
         @keyframes vibrate { 0% { transform: translateX(4px); } 100% { transform: translateX(-4px); } }
 
-        #countdown { font-size: 8rem; font-family: 'Cormorant Upright'; position: absolute; top: 15%; left: 50%; transform: translateX(-50%); z-index: 5; }
+        #countdown { font-size: 8rem; font-family: 'Cormorant Upright'; position: absolute; top: 15%; left: 50%; transform: translateX(-50%); z-index: 2; }
         @keyframes fadeInMsg { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
@@ -131,21 +106,17 @@
         const pfpImg = document.getElementById('pfp-img');
         const hitLabel = document.getElementById('hit-text');
         const anchor = document.getElementById('anchor');
+        const stage = document.getElementById('game-stage');
         let isProcessing = false;
 
-        const hitPhrases = ["OW!", "OUCH!", "HEY!", "STOP!", "HELP!", "OUCHIE!", "T-T", "RUDE!", "WATCH IT!"];
+        const hitPhrases = ["OW!", "OUCH!", "HEY!", "STOP!", "HELP!", "T-T", "WATCH IT!"];
 
         function changeScreen(from, to, callback) {
-            const f = document.getElementById(from);
-            const t = document.getElementById(to);
+            const f = document.getElementById(from); const t = document.getElementById(to);
             f.style.opacity = '0';
             setTimeout(() => {
-                f.style.display = 'none';
-                t.style.display = 'flex';
-                setTimeout(() => {
-                    t.style.opacity = '1';
-                    if (callback) callback();
-                }, 100);
+                f.style.display = 'none'; t.style.display = 'flex';
+                setTimeout(() => { t.style.opacity = '1'; if (callback) callback(); }, 100);
             }, 800);
         }
 
@@ -180,73 +151,41 @@
             if (idx === 'no') {
                 addBubble('right', 'no! sorry');
                 setTimeout(() => {
-                    typing.style.display = 'block';
-                    anchor.scrollIntoView({ behavior: 'smooth' });
-                    setTimeout(() => {
-                        typing.style.display = 'none';
-                        addBubble('left', '...');
-                        setTimeout(() => displayOptions([{ text: 'ugh fine', next: 7 }]), 1000);
-                    }, 1200);
+                    typing.style.display = 'block'; anchor.scrollIntoView({ behavior: 'smooth' });
+                    setTimeout(() => { typing.style.display = 'none'; addBubble('left', '...'); setTimeout(() => displayOptions([{ text: 'ugh fine', next: 7 }]), 1000); }, 1200);
                 }, 600);
                 return;
             }
-
-            const m = script[idx];
-            if (!m) return;
-
+            const m = script[idx]; if (!m) return;
             if (m.side === 'left') {
-                typing.style.display = 'block';
-                anchor.scrollIntoView({ behavior: 'smooth' });
-                setTimeout(() => {
-                    typing.style.display = 'none';
-                    addBubble('left', m.text);
-                    setTimeout(() => runScript(idx + 1), 700);
-                }, Math.max(1000, m.text.length * 20));
+                typing.style.display = 'block'; anchor.scrollIntoView({ behavior: 'smooth' });
+                setTimeout(() => { typing.style.display = 'none'; addBubble('left', m.text); setTimeout(() => runScript(idx + 1), 700); }, Math.max(1000, m.text.length * 20));
             } else if (m.side === 'choose') { displayOptions(m.options); }
-            else if (m.side === 'right_auto') {
-                setTimeout(() => {
-                    addBubble('right', m.text);
-                    setTimeout(() => runScript(m.next), 800);
-                }, 1600);
-            }
+            else if (m.side === 'right_auto') { setTimeout(() => { addBubble('right', m.text); setTimeout(() => runScript(m.next), 800); }, 1600); }
         }
 
         function addBubble(side, text) {
             const div = document.createElement('div'); div.className = `message msg-${side}`;
             div.innerHTML = `<div class="bubble-${side}">${text}</div>`;
-            chatContent.appendChild(div);
-            anchor.scrollIntoView({ behavior: 'smooth' });
+            chatContent.appendChild(div); anchor.scrollIntoView({ behavior: 'smooth' });
         }
 
         function displayOptions(opts) {
             inputArea.innerHTML = '';
             opts.forEach(o => {
-                const btn = document.createElement('div');
-                btn.className = 'option-chip';
-                btn.innerText = o.text;
-                btn.onclick = () => {
-                    if (isProcessing) return; isProcessing = true;
-                    inputArea.innerHTML = '';
-                    if (o.next !== 'no') addBubble('right', o.text);
-                    runScript(o.next);
-                };
+                const btn = document.createElement('div'); btn.className = 'option-chip'; btn.innerText = o.text;
+                btn.onclick = () => { if (isProcessing) return; isProcessing = true; inputArea.innerHTML = ''; if (o.next !== 'no') addBubble('right', o.text); runScript(o.next); };
                 inputArea.appendChild(btn);
             });
         }
 
-        // --- Jogo ---
-        let gameActive = false, isJumping = false, obsCount = 0;
+        // --- Game ---
+        let gameActive = false, isJumping = false, score = 0;
 
-        window.addEventListener('keydown', (e) => {
-            if (gameActive && (e.code === 'Space' || e.key === 'w' || e.key === 'ArrowUp')) {
-                e.preventDefault();
-                playerJump();
-            }
-        });
+        window.addEventListener('keydown', (e) => { if (gameActive && (e.code === 'Space' || e.key === 'w' || e.key === 'ArrowUp')) { e.preventDefault(); playerJump(); } });
 
         function startCountdown() {
-            let count = 3;
-            const cd = document.getElementById('countdown');
+            let count = 3; const cd = document.getElementById('countdown');
             const timer = setInterval(() => {
                 cd.innerText = count <= 0 ? "GO!" : count;
                 if (count < -1) { clearInterval(timer); cd.innerText = ""; startGame(); }
@@ -254,33 +193,43 @@
             }, 800);
         }
 
-        function startGame() { gameActive = true; spawnObs(); }
+        function startGame() { 
+            gameActive = true; 
+            spawnObs(); 
+            setInterval(spawnCloud, 2000); 
+        }
+
+        function spawnCloud() {
+            if(!gameActive) return;
+            const cloud = document.createElement('img');
+            cloud.src = 'obj-cloud.png';
+            cloud.className = 'cloud';
+            cloud.style.width = (Math.random() * 80 + 60) + 'px';
+            cloud.style.top = (Math.random() * 100 + 20) + 'px';
+            cloud.style.right = '-150px';
+            stage.appendChild(cloud);
+
+            let pos = -150;
+            let speed = Math.random() * 2 + 3;
+            const moveCloud = setInterval(() => {
+                if(!gameActive) { clearInterval(moveCloud); cloud.remove(); return; }
+                pos += speed;
+                cloud.style.right = pos + 'px';
+                if (pos > window.innerWidth + 200) { clearInterval(moveCloud); cloud.remove(); }
+            }, 20);
+        }
 
         function playerJump() {
             if (isJumping || !gameActive) return;
-            isJumping = true;
-            const p = document.getElementById('player');
-            
-            p.classList.remove('walking', 'landed'); 
-            p.classList.add('jumping');
-            
-            let b = 0, v = 18, g = 0.95; 
+            isJumping = true; const p = document.getElementById('player');
+            p.classList.remove('walking', 'landed'); p.classList.add('jumping');
+            let b = 0, v = 19, g = 1.0; 
             const jumpInterval = setInterval(() => {
                 v -= g; b += v;
                 if (b <= 0) {
-                    b = 0; 
-                    clearInterval(jumpInterval);
-                    p.style.bottom = '0px';
-                    
-                    // Lógica de Pouso (Land)
-                    p.classList.remove('jumping');
-                    p.classList.add('landed');
-                    
-                    setTimeout(() => {
-                        p.classList.remove('landed');
-                        p.classList.add('walking');
-                        isJumping = false;
-                    }, 250); // Tempo exato da animação landed
+                    b = 0; clearInterval(jumpInterval); p.style.bottom = '0px';
+                    p.classList.remove('jumping'); p.classList.add('landed');
+                    setTimeout(() => { p.classList.remove('landed'); p.classList.add('walking'); isJumping = false; }, 250);
                 }
                 p.style.bottom = b + 'px';
             }, 20);
@@ -288,17 +237,28 @@
 
         function spawnObs() {
             if (!gameActive) return;
-            const stage = document.getElementById('game-stage');
+            
+            // Lógica de "Grupos" tipo Dino Run
+            let groupSize = Math.floor(Math.random() * 3) + 1; // Grupos de 1 a 3
+            for(let i = 0; i < groupSize; i++) {
+                setTimeout(() => createObstacle(), i * 250); // Delay curto entre eles
+            }
+
+            let nextSpawn = Math.random() * 1000 + 800; // Tempo até o próximo grupo
+            setTimeout(spawnObs, nextSpawn);
+        }
+
+        function createObstacle() {
+            if(!gameActive) return;
             const obs = document.createElement('div');
             obs.className = 'obstacle';
-            obs.innerHTML = `<img src="obj.png" width="85">`;
+            obs.innerHTML = `<img src="obj.png" width="75">`;
             stage.appendChild(obs);
 
             let pos = -100;
             const move = setInterval(() => {
                 if (!gameActive) { clearInterval(move); obs.remove(); return; }
-                pos += 10.5; 
-                obs.style.right = pos + 'px';
+                pos += 12; obs.style.right = pos + 'px';
 
                 const pRect = document.getElementById('player').getBoundingClientRect();
                 const oRect = obs.getBoundingClientRect();
@@ -308,20 +268,13 @@
                         pfpImg.classList.add('hit-effect');
                         hitLabel.innerText = hitPhrases[Math.floor(Math.random()*hitPhrases.length)];
                         hitLabel.style.opacity = "1";
-                        setTimeout(() => {
-                            pfpImg.classList.remove('hit-effect');
-                            hitLabel.style.opacity = "0";
-                        }, 400);
+                        setTimeout(() => { pfpImg.classList.remove('hit-effect'); hitLabel.style.opacity = "0"; }, 400);
                     }
                 }
 
                 if (pos > window.innerWidth + 120) {
-                    clearInterval(move); obs.remove(); obsCount++;
-                    if (obsCount >= 20) { 
-                        gameActive = false; 
-                        setTimeout(() => changeScreen('game-wrapper', 'final-screen'), 500); 
-                    }
-                    else { setTimeout(spawnObs, Math.random() * 300 + 100); }
+                    clearInterval(move); obs.remove(); score++;
+                    if (score >= 40) { gameActive = false; setTimeout(() => changeScreen('game-wrapper', 'final-screen'), 500); }
                 }
             }, 20);
         }
