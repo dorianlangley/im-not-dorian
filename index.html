@@ -13,27 +13,20 @@
             height: 100vh; width: 100vw;
         }
 
-        /* --- Telas --- */
         .screen { 
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             display: none; flex-direction: column; align-items: center; justify-content: center;
-            opacity: 0; transition: opacity 0.6s ease-in-out; 
+            opacity: 0; transition: opacity 0.8s ease-in-out; 
             z-index: 1; pointer-events: none;
         }
 
         #start-screen { display: flex; opacity: 1; z-index: 100; pointer-events: all; }
-
         .hello-text { font-family: 'Cormorant Upright', serif; font-size: 3.5rem; color: #1a1a1a; margin-bottom: 40px; text-align: center; }
-        .btn-start {
-            padding: 18px 50px; font-size: 1.1rem; border: 1px solid #1a1a1a; cursor: pointer;
-            background-color: #f5f5dc; color: black; border-radius: 50px; transition: 0.3s;
-            position: relative; z-index: 110; pointer-events: all;
-        }
+        .btn-start { padding: 18px 50px; font-size: 1.1rem; border: 1px solid #1a1a1a; cursor: pointer; background-color: #f5f5dc; color: black; border-radius: 50px; transition: 0.3s; position: relative; z-index: 110; pointer-events: all; }
 
         /* --- Chat --- */
         #chat-wrapper { width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; }
         #chat-container { width: 100%; max-width: 500px; height: 75vh; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; scroll-behavior: smooth; margin: 0 auto; pointer-events: all; }
-        #chat-container::-webkit-scrollbar { width: 0px; }
         .message { margin-bottom: 20px; display: flex; opacity: 0; animation: fadeInMsg 0.5s forwards; width: 100%; }
         .msg-left { justify-content: flex-start; }
         .msg-right { justify-content: flex-end; }
@@ -42,62 +35,47 @@
         #input-area { height: 100px; width: 100%; max-width: 500px; display: flex; align-items: center; justify-content: center; border-top: 1px solid #eee; background: white; margin: 0 auto; pointer-events: all; }
         .option-chip { background: #f5f5dc; padding: 14px 28px; border-radius: 30px; cursor: pointer; border: 1px solid #ddd; }
 
-        /* --- Jogo (Estilo Dino do Google) --- */
+        /* --- Jogo --- */
         #game-wrapper { width: 100vw; height: 100vh; background: #fff; overflow: hidden; display: flex; flex-direction: column; }
-        #game-stage { 
-            width: 100%; flex: 1; position: relative; 
-            overflow: hidden; display: flex; align-items: flex-end; 
-            pointer-events: all;
-        }
+        #game-stage { width: 100%; flex: 1; position: relative; overflow: hidden; display: flex; align-items: flex-end; pointer-events: all; }
         #ground { width: 100%; height: 25vh; background: #000; z-index: 20; position: relative; }
-
-        /* Player menor para dar sensação de espaço */
         #player { position: absolute; bottom: 0; left: 10%; width: 45px; height: 45px; z-index: 25; transform-origin: bottom center; }
+        .obstacle { position: absolute; bottom: 0; right: -60px; width: 50px; height: 50px; z-index: 22; transform-origin: bottom center; animation: jellyWalk 0.6s infinite alternate ease-in-out; }
+        @keyframes jellyWalk { 0% { transform: scale(1.2, 0.8); } 100% { transform: scale(0.8, 1.2); } }
         
-        .obstacle { 
-            position: absolute; bottom: 0; right: -60px; width: 50px; height: 50px; z-index: 22; 
-            transform-origin: bottom center; animation: jellyWalk 0.6s infinite alternate ease-in-out;
-        }
-        @keyframes jellyWalk {
-            0% { transform: scale(1.2, 0.8); }
-            100% { transform: scale(0.8, 1.2); }
+        /* Overlay de Texto do Jogo */
+        #game-text-overlay {
+            position: absolute; top: 30%; width: 80%; left: 10%; text-align: center;
+            font-size: 1.1rem; color: #1a1a1a; z-index: 50; line-height: 1.6;
+            pointer-events: none; transition: opacity 1s; opacity: 0;
         }
 
-        .cloud { position: absolute; opacity: 0.1; z-index: 1; pointer-events: none; }
-        .sparkle { position: absolute; background: #000; border-radius: 50%; pointer-events: none; z-index: 5; }
-
-        @keyframes fall { 0% { transform: translateY(-50px); opacity: 0; } 100% { transform: translateY(110vh); opacity: 0; } }
+        #white-out { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; z-index: 200; display: none; opacity: 0; transition: opacity 2s; }
 
         .walking { animation: walkElastic 0.4s infinite alternate ease-in-out; }
         @keyframes walkElastic { from { transform: rotate(-10deg); } to { transform: rotate(10deg); } }
-
         .jumping { animation: jumpStretch 0.5s forwards; }
         @keyframes jumpStretch { 0% { transform: scale(1, 1); } 50% { transform: scale(0.8, 1.3); } 100% { transform: scale(1, 1); } }
-
         .landed { animation: landImpact 0.2s forwards; }
         @keyframes landImpact { 0% { transform: scale(1.6, 0.4); } 100% { transform: scale(1, 1); } }
 
-        #countdown { 
-            font-size: 5rem; font-family: 'Arial Black', sans-serif; font-weight: 900;
-            position: absolute; top: 15%; left: 50%; transform: translateX(-50%); 
-            z-index: 30; color: #000;
-        }
-
+        #countdown { font-size: 5rem; font-family: 'Arial Black', sans-serif; position: absolute; top: 15%; left: 50%; transform: translateX(-50%); z-index: 30; color: #000; }
         #hit-text { position: absolute; top: -35px; left: 50%; transform: translateX(-50%); background: black; color: white; padding: 2px 8px; border-radius: 5px; font-size: 0.6rem; opacity: 0; z-index: 40; }
         .hit-effect { filter: grayscale(1) contrast(200%); animation: vibrate 0.1s linear 2; }
         @keyframes vibrate { 0% { transform: translateX(3px); } 100% { transform: translateX(-3px); } }
 
-        /* Responsividade para Desktop */
-        @media (min-width: 600px) {
-            #player { width: 65px; height: 65px; left: 15%; }
-            .obstacle { width: 80px; height: 80px; }
-            .hello-text { font-size: 5rem; }
-        }
+        /* Final Screen */
+        #final-screen { background: white; z-index: 210; }
+        .nana-text { font-family: 'Cormorant Upright', serif; font-size: 2.2rem; font-style: italic; margin-top: 10px; }
+        .drawing-img { max-width: 85%; height: auto; border: 1px solid #eee; margin: 20px 0; opacity: 0; transition: opacity 1.5s; }
+        .final-btn { background: #1a1a1a; color: white; border: none; padding: 15px 30px; border-radius: 5px; cursor: pointer; text-decoration: none; font-size: 0.9rem; margin-top: 20px; display: none; }
 
         @keyframes fadeInMsg { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
+
+    <div id="white-out"></div>
 
     <div id="start-screen" class="screen">
         <div class="hello-text">hello</div>
@@ -113,19 +91,22 @@
     </div>
 
     <div id="game-wrapper" class="screen">
+        <div id="game-text-overlay"></div>
         <div id="countdown"></div>
         <div id="game-stage" onmousedown="playerJump()" ontouchstart="playerJump()">
             <div id="player" class="walking">
                 <div id="hit-text">OW!</div>
-                <img src="pfp.png" width="100%" id="pfp-img" style="border-radius:8px; display: block;">
+                <img src="pfp.png" width="100%" id="pfp-img" style="border-radius:8px;">
             </div>
         </div>
         <div id="ground"></div>
     </div>
 
     <div id="final-screen" class="screen">
-        <h2 class="hello-text" style="font-size: 2.5rem;">For you.</h2>
-        <img src="desenho.jpg" style="max-width: 80%; height: auto; border: 1px solid #eee; padding: 5px;">
+        <div id="final-text-content" style="text-align: center; padding: 20px;"></div>
+        <img src="desenho.jpg" id="final-drawing" class="drawing-img">
+        <div id="final-subtext" style="font-size: 0.9rem; color: #666; margin-bottom: 20px; opacity: 0;"></div>
+        <a href="LINK_DO_DRIVE_AQUI" target="_blank" id="drive-btn" class="final-btn">click here to download the drawing from drive.</a>
     </div>
 
     <script>
@@ -135,25 +116,23 @@
         const typing = document.getElementById('typing-indicator');
         const pfpImg = document.getElementById('pfp-img');
         const hitLabel = document.getElementById('hit-text');
+        const gameOverlay = document.getElementById('game-text-overlay');
         const stage = document.getElementById('game-stage');
-        let isProcessing = false, gameActive = false, isJumping = false, score = 0;
-
-        function scrollChat() { chatContainer.scrollTo({ top: chatContainer.scrollHeight, behavior: 'smooth' }); }
+        let gameActive = false, isJumping = false, score = 0;
 
         function changeScreen(from, to, callback) {
             const f = document.getElementById(from); const t = document.getElementById(to);
             f.style.opacity = '0'; f.style.pointerEvents = 'none';
-            setTimeout(() => {
-                f.style.display = 'none'; t.style.display = 'flex';
+            setTimeout(() => { f.style.display = 'none'; t.style.display = 'flex';
                 setTimeout(() => { t.style.opacity = '1'; t.style.pointerEvents = 'all'; t.style.zIndex = '100'; if (callback) callback(); }, 50);
-            }, 600);
+            }, 800);
         }
 
         const script = [
             { side: 'left', text: 'Clara' },
             { side: 'left', text: 'I know I said I wouldn’t talk to you anymore' },
             { side: 'left', text: 'but, can I talk to you?' },
-            { side: 'choose', options: [{ text: 'ugh fine', next: 4 }, { text: 'no! sorry', next: 'no' }] },
+            { side: 'choose', options: [{ text: 'ugh fine', next: 4 }] },
             { side: 'left', text: 'thank you…' },
             { side: 'left', text: 'I wanted to apologize' },
             { side: 'left', text: 'I miss having you as a friend' },
@@ -161,53 +140,45 @@
             { side: 'right_auto', text: 'I guess lol', next: 'game' }
         ];
 
-        function startChat() { runScript(0); }
+        const gameFrases = [
+            "Clara, yeah, I put this here just so you’d keep taking damage lol but don’t worry, the game keeps going and you can’t die, you’re just gonna stay there complaining in the corner.",
+            "I’m kinda losing it rn. I wasn’t being dramatic when I said I was doing really bad, I messed up with you and if you really are dating someone, you and your boyfriend will probably think this is awful...",
+            "but this isn’t a confession or some emotional plea, I just miss my funny friend.",
+            "I know I broke your trust and I shouldn’t have gotten involved in anyone’s problems (yeah I got kinda dragged later for always giving my opinion about it but I didn’t mean anything bad, I was just talking to both sides).",
+            "I’m still kinda messed up but I’m in therapy now and I realized I needed to give you a proper apology.",
+            "I miss talking to you and having friends in general, it’s not just because I’m alone, but you get it… I kinda pushed myself away and honestly I think I only really care about you and like two other people.",
+            "I watched Donnie Darko, it’s actually really good. #literallyme, I tried watching One Piece but… not really my thing.",
+            "And the Portuguese “lessons”? yeah it’s kinda hard ngl so I dropped it for now but I know the super basics.",
+            "I’m not here to beg you for anything, I just feel okay talking to you, even if it’s like this…",
+            "I kinda dream about a perfect future where I get to be your friend again.",
+            "Dorian Langley."
+        ];
 
+        function startChat() { runScript(0); }
         function runScript(idx) {
-            isProcessing = false;
             if (idx === 'game') { changeScreen('chat-wrapper', 'game-wrapper', startCountdown); return; }
-            if (idx === 'no') {
-                addBubble('right', 'no! sorry');
-                setTimeout(() => {
-                    typing.style.display = 'block'; scrollChat();
-                    setTimeout(() => { typing.style.display = 'none'; addBubble('left', '...'); setTimeout(() => displayOptions([{ text: 'ugh fine', next: 4 }]), 1000); }, 1200);
-                }, 600);
-                return;
-            }
             const m = script[idx]; if (!m) return;
             if (m.side === 'left') {
-                typing.style.display = 'block'; scrollChat();
-                setTimeout(() => { typing.style.display = 'none'; addBubble('left', m.text); setTimeout(() => runScript(idx + 1), 800); }, Math.max(1000, m.text.length * 20));
+                typing.style.display = 'block'; chatContainer.scrollTo(0, chatContainer.scrollHeight);
+                setTimeout(() => { typing.style.display = 'none'; addBubble('left', m.text); setTimeout(() => runScript(idx + 1), 1000); }, 1500);
             } else if (m.side === 'choose') { displayOptions(m.options); }
-            else if (m.side === 'right_auto') { setTimeout(() => { addBubble('right', m.text); setTimeout(() => runScript(m.next), 800); }, 1600); }
+            else if (m.side === 'right_auto') { setTimeout(() => { addBubble('right', m.text); setTimeout(() => runScript(m.next), 800); }, 1500); }
         }
 
         function addBubble(side, text) {
             const div = document.createElement('div'); div.className = `message msg-${side}`;
             div.innerHTML = `<div class="bubble-${side}">${text}</div>`;
-            chatContent.appendChild(div); scrollChat();
+            chatContent.appendChild(div); chatContainer.scrollTo(0, chatContainer.scrollHeight);
         }
 
         function displayOptions(opts) {
             inputArea.innerHTML = '';
             opts.forEach(o => {
                 const btn = document.createElement('div'); btn.className = 'option-chip'; btn.innerText = o.text;
-                btn.onclick = () => { if (isProcessing) return; isProcessing = true; inputArea.innerHTML = ''; if (o.next !== 'no') addBubble('right', o.text); runScript(o.next); };
+                btn.onclick = () => { inputArea.innerHTML = ''; addBubble('right', o.text); runScript(o.next); };
                 inputArea.appendChild(btn);
             });
         }
-
-        function createSparkle() {
-            const s = document.createElement('div'); s.className = 'sparkle';
-            const size = Math.random() * 4 + 2;
-            s.style.width = size + 'px'; s.style.height = size + 'px';
-            s.style.left = Math.random() * 100 + 'vw'; s.style.top = '-10px';
-            const d = gameActive ? (Math.random() * 2 + 1.5) : (Math.random() * 5 + 3);
-            s.style.animation = `fall ${d}s linear forwards`;
-            document.body.appendChild(s);
-            setTimeout(() => s.remove(), d * 1000);
-        }
-        setInterval(createSparkle, 180);
 
         function startCountdown() {
             let count = 3; const cd = document.getElementById('countdown');
@@ -218,26 +189,64 @@
             }, 800);
         }
 
-        function startGame() { gameActive = true; spawnObs(); setInterval(spawnCloud, 2000); }
+        function startGame() { 
+            gameActive = true; 
+            spawnObs(); 
+            setTimeout(() => showGameText(0), 2000); 
+        }
 
-        function spawnCloud() {
-            if(!gameActive) return;
-            const cloud = document.createElement('img'); cloud.src = 'obj-cloud.png'; cloud.className = 'cloud';
-            cloud.style.width = (Math.random() * 60 + 80) + 'px'; cloud.style.top = (Math.random() * 120 + 20) + 'px';
-            cloud.style.right = '-100px'; stage.appendChild(cloud);
-            let pos = -100; let speed = Math.random() * 0.8 + 1.2;
-            const moveCloud = setInterval(() => {
-                if(!gameActive) { clearInterval(moveCloud); cloud.remove(); return; }
-                pos += speed; cloud.style.right = pos + 'px';
-                if (pos > window.innerWidth + 120) { clearInterval(moveCloud); cloud.remove(); }
-            }, 20);
+        function showGameText(idx) {
+            if (idx >= gameFrases.length) { endGameSequence(); return; }
+            gameOverlay.innerText = gameFrases[idx];
+            gameOverlay.style.opacity = 1;
+            setTimeout(() => {
+                gameOverlay.style.opacity = 0;
+                setTimeout(() => showGameText(idx + 1), 1000);
+            }, 6000); // 6 segundos cada frase
+        }
+
+        function endGameSequence() {
+            const wo = document.getElementById('white-out');
+            wo.style.display = 'block';
+            setTimeout(() => { wo.style.opacity = 1; 
+                setTimeout(() => { 
+                    gameActive = false;
+                    showFinalScreen();
+                }, 2000);
+            }, 100);
+        }
+
+        function showFinalScreen() {
+            const final = document.getElementById('final-screen');
+            const textContent = document.getElementById('final-text-content');
+            final.style.display = 'flex'; final.style.opacity = 1;
+
+            setTimeout(() => {
+                textContent.innerHTML = `<p style="opacity:0; transition:2s" id="f1">you thought it was just this kinda low-effort site? nuh uh. I don’t show up empty-handed</p>`;
+                setTimeout(() => document.getElementById('f1').style.opacity = 1, 100);
+                
+                setTimeout(() => {
+                    textContent.innerHTML += `<p class="nana-text" style="opacity:0; transition:2s" id="f2">for you, Nana fan.</p>`;
+                    setTimeout(() => document.getElementById('f2').style.opacity = 1, 100);
+                    
+                    setTimeout(() => {
+                        document.getElementById('final-drawing').style.opacity = 1;
+                        setTimeout(() => {
+                            const sub = document.getElementById('final-subtext');
+                            sub.innerText = "I think I should’ve made your hair longer… and idk if you’d even wear this outfit";
+                            sub.style.opacity = 1;
+                            document.getElementById('drive-btn').style.display = 'inline-block';
+                        }, 2000);
+                    }, 2500);
+                }, 4000);
+            }, 1000);
         }
 
         function playerJump() {
             if (isJumping || !gameActive) return;
             isJumping = true; const p = document.getElementById('player');
             p.classList.remove('walking', 'landed'); p.classList.add('jumping');
-            let b = 0, v = 15, g = 0.75; // Gravidade mais leve para controle suave
+            let b = 0, v = 15, g = 0.75;
             const jumpInterval = setInterval(() => {
                 v -= g; b += v;
                 if (b <= 0) {
@@ -251,22 +260,19 @@
 
         function spawnObs() {
             if (!gameActive) return;
-            let groupSize = Math.floor(Math.random() * 2) + 1; 
-            for(let i = 0; i < groupSize; i++) { setTimeout(() => createObstacle(), i * 400); }
-            setTimeout(spawnObs, Math.random() * 1800 + 1000);
+            createObstacle();
+            setTimeout(spawnObs, Math.random() * 2000 + 1000);
         }
 
         function createObstacle() {
-            if(!gameActive) return;
             const obs = document.createElement('div'); obs.className = 'obstacle';
             const size = window.innerWidth < 600 ? 50 : 80;
             obs.innerHTML = `<img src="obj.png" width="${size}">`; stage.appendChild(obs);
             let pos = -size;
-            let speed = window.innerWidth < 600 ? 7 : 11; // Velocidade reduzida no mobile para visibilidade
             const move = setInterval(() => {
                 if (!gameActive) { clearInterval(move); obs.remove(); return; }
-                pos += speed; obs.style.right = pos + 'px';
-                const pRect = document.getElementById('pfp-img').getBoundingClientRect();
+                pos += (window.innerWidth < 600 ? 7 : 11); obs.style.right = pos + 'px';
+                const pRect = pfpImg.getBoundingClientRect();
                 const oRect = obs.getBoundingClientRect();
                 if (oRect.left < pRect.right - 15 && oRect.right > pRect.left + 15 && oRect.top < pRect.bottom - 5) {
                     if (!pfpImg.classList.contains('hit-effect')) {
@@ -274,13 +280,9 @@
                         setTimeout(() => { pfpImg.classList.remove('hit-effect'); hitLabel.style.opacity = "0"; }, 400);
                     }
                 }
-                if (pos > window.innerWidth + 100) { clearInterval(move); obs.remove(); score++;
-                    if (score >= 35) { gameActive = false; setTimeout(() => changeScreen('game-wrapper', 'final-screen'), 500); }
-                }
+                if (pos > window.innerWidth + 100) { clearInterval(move); obs.remove(); }
             }, 20);
         }
-
-        window.addEventListener('keydown', (e) => { if (e.code === 'Space' || e.key === 'ArrowUp') playerJump(); });
     </script>
 </body>
 </html>
