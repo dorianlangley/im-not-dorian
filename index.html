@@ -41,7 +41,7 @@
         }
 
         .option-chip {
-            background: #f5f5dc; padding: 10px 20px; border-radius: 20px;
+            background: #f5f5dc; padding: 10px 25px; border-radius: 20px;
             font-size: 0.9rem; cursor: pointer; border: 1px solid transparent;
             transition: 0.3s; user-select: none;
         }
@@ -58,15 +58,13 @@
         
         @keyframes fadeInMsg { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
         
-        /* Vibração mais suave */
-        @keyframes softVibrate {
-            0% { transform: translateX(0); }
-            25% { transform: translateX(1px); }
-            50% { transform: translateX(0); }
-            75% { transform: translateX(-1px); }
-            100% { transform: translateX(0); }
+        /* Efeito Pulsar (Substitui vibração) */
+        @keyframes pulse {
+            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(245, 245, 220, 0.7); }
+            70% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(245, 245, 220, 0); }
+            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(245, 245, 220, 0); }
         }
-        .vibrate { animation: softVibrate 0.4s linear infinite; border: 1px solid #ddd !important; }
+        .pulse { animation: pulse 1.5s infinite; border: 1px solid #d4d4b8 !important; }
 
         #final-screen { display: none; text-align: center; opacity: 0; transition: opacity 2s; }
         .hidden { display: none !important; }
@@ -95,6 +93,8 @@
         const inputArea = document.getElementById('input-area');
         const typing = document.getElementById('typing-indicator');
 
+        let isProcessing = false; // Trava para evitar cliques duplos
+
         function start() {
             document.getElementById('start-screen').style.opacity = '0';
             setTimeout(() => {
@@ -102,7 +102,7 @@
                 document.getElementById('chat-wrapper').style.display = 'flex';
                 setTimeout(() => {
                     document.getElementById('chat-wrapper').style.opacity = '1';
-                    setInterval(createSparkle, 1000);
+                    setInterval(createSparkle, 1200);
                     runScript(0);
                 }, 100);
             }, 800);
@@ -143,46 +143,40 @@
         ];
 
         function runScript(idx) {
+            isProcessing = false; // Libera o clique para a próxima etapa
+
             if (idx === 'final') { finish(); return; }
             
-            // Lógica do "No" corrigida
             if (idx === 'no') { 
-                inputArea.innerHTML = ''; // Limpa botões imediatamente
                 addBubble('right', 'no! sorry');
                 
-                // Dorian demora um pouco para reagir ao "Não"
                 setTimeout(() => {
                     typing.style.display = 'block';
                     setTimeout(() => {
                         typing.style.display = 'none';
                         addBubble('left', '...');
-                        // Aguarda mais 2 segundos após o "..." para mostrar a opção forçada
-                        setTimeout(() => runScript(6), 2000); 
-                    }, 1500);
-                }, 1000);
+                        setTimeout(() => runScript(6), 2500); 
+                    }, 1800);
+                }, 1200);
                 return;
             }
 
             const m = script[idx];
             if (m.side === 'left') {
                 typing.style.display = 'block';
-                // Digitação mais humana
-                const delay = Math.max(1500, m.text.length * 40);
+                const delay = Math.max(1800, m.text.length * 45);
                 setTimeout(() => {
                     typing.style.display = 'none';
                     addBubble('left', m.text);
-                    setTimeout(() => runScript(idx + 1), 1500);
+                    setTimeout(() => runScript(idx + 1), 1600);
                 }, delay);
-            } else if (m.side === 'choose') {
-                displayOptions(m.options);
-            } else if (m.side === 'choose_forced') {
-                displayOptions(m.options, true);
+            } else if (m.side === 'choose' || m.side === 'choose_forced') {
+                displayOptions(m.options, m.side === 'choose_forced');
             } else if (m.side === 'right_auto') {
-                // Mensagem automática dela com tempo de espera
                 setTimeout(() => {
                     addBubble('right', m.text);
-                    setTimeout(() => runScript(m.next), 1500);
-                }, 2500);
+                    setTimeout(() => runScript(m.next), 1800);
+                }, 2800);
             }
         }
 
@@ -194,15 +188,18 @@
             chatContainer.scrollTop = chatContainer.scrollHeight;
         }
 
-        function displayOptions(opts, vibrate = false) {
+        function displayOptions(opts, shouldPulse = false) {
             inputArea.innerHTML = '';
             opts.forEach(o => {
                 const btn = document.createElement('div');
-                btn.className = 'option-chip' + (vibrate ? ' vibrate' : '');
+                btn.className = 'option-chip' + (shouldPulse ? ' pulse' : '');
                 btn.innerText = o.text;
                 btn.onclick = () => {
-                    inputArea.innerHTML = ''; // Garante que some após o clique
-                    addBubble('right', o.text);
+                    if (isProcessing) return; // Se já clicou, ignora cliques extras
+                    isProcessing = true;
+                    
+                    inputArea.innerHTML = ''; 
+                    if (o.next !== 'no') addBubble('right', o.text);
                     runScript(o.next);
                 };
                 inputArea.appendChild(btn);
