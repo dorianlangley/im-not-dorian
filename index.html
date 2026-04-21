@@ -9,291 +9,190 @@
         body { 
             margin: 0; background: white; font-family: 'Raleway', sans-serif; 
             overflow: hidden; display: flex; justify-content: center; align-items: center; 
-            height: 100vh; flex-direction: column; transition: background 0.5s ease;
+            height: 100vh; flex-direction: column;
         }
 
-        /* --- Tela 1: O Início --- */
-        #start-screen { text-align: center; z-index: 10; transition: opacity 1s; display: flex; flex-direction: column; align-items: center; }
-        
-        .hello-text { 
-            font-family: 'Cormorant Upright', serif; font-size: 5rem; 
-            margin-bottom: 40px; color: #1a1a1a; opacity: 0; animation: fadeIn 2s forwards;
-        }
-
+        /* --- Tela 1: Capa --- */
+        #start-screen { text-align: center; z-index: 10; transition: opacity 0.8s; display: flex; flex-direction: column; align-items: center; }
+        .hello-text { font-family: 'Cormorant Upright', serif; font-size: 5rem; margin-bottom: 40px; color: #1a1a1a; }
         .btn-start {
             padding: 18px 50px; font-size: 1.1rem; border: 1px solid #1a1a1a; cursor: pointer;
-            background-color: #f5f5dc; /* Bege */
-            color: black; font-family: 'Raleway', sans-serif; letter-spacing: 2px;
-            transition: all 0.4s ease; border-radius: 50px; /* Mais bonitinho/arredondado */
+            background-color: #f5f5dc; color: black; letter-spacing: 2px;
+            transition: all 0.3s; border-radius: 50px;
         }
+        .btn-start:active { background-color: black; color: #f5f5dc; }
 
-        .btn-start:hover { background-color: #e6e6cc; }
-        .btn-start:active { background-color: black; color: #f5f5dc; scale: 0.98; }
-
-        /* --- Tela 2: O Chat --- */
+        /* --- Tela 2: Chat --- */
         #chat-container {
-            display: none; width: 90%; max-width: 600px; height: 80vh;
-            flex-direction: column; opacity: 0; transition: opacity 1.5s;
-            overflow-y: scroll; padding: 20px; scroll-behavior: smooth;
+            display: none; width: 90%; max-width: 500px; height: 80vh;
+            flex-direction: column; opacity: 0; transition: opacity 1s;
+            overflow-y: auto; padding: 20px;
         }
-
-        /* Esconder scrollbar */
         #chat-container::-webkit-scrollbar { display: none; }
 
-        .message { margin-bottom: 20px; display: flex; opacity: 0; animation: fadeInMsg 0.5s forwards; }
-        
-        /* Mensagens Dele (Lado Esquerdo, Balão Preto) */
+        .message { margin-bottom: 15px; display: flex; opacity: 0; animation: fadeInMsg 0.4s forwards; }
         .msg-left { justify-content: flex-start; }
-        .bubble-left { 
-            background: #1a1a1a; color: #f5f5dc; 
-            padding: 15px 20px; border-radius: 20px 20px 20px 0px;
-            max-width: 70%; font-weight: 300; line-height: 1.5;
-        }
-
-        /* Mensagens Dela (Lado Direito, Balão Bege) */
         .msg-right { justify-content: flex-end; }
-        .bubble-right { 
-            background: #f5f5dc; color: black; 
-            padding: 15px 20px; border-radius: 20px 20px 0px 20px;
-            max-width: 70%; font-weight: 400; line-height: 1.5;
-            cursor: pointer; transition: scale 0.2s;
+        
+        .bubble-left { background: #1a1a1a; color: #f5f5dc; padding: 12px 18px; border-radius: 18px 18px 18px 0; max-width: 80%; font-weight: 300; }
+        .bubble-right { background: #f5f5dc; color: black; padding: 12px 18px; border-radius: 18px 18px 0 18px; max-width: 80%; font-weight: 400; }
+
+        .option-btn { 
+            display: block; margin: 10px 0; text-decoration: underline; cursor: pointer; font-weight: 500;
         }
 
-        /* Botões de Decisão dela (na Bubble Right) */
-        .chat-option { display: block; margin-bottom: 10px; padding: 10px; text-decoration: underline; color: black; cursor: pointer; }
-        .chat-option:hover { color: #555; }
-
-        /* Efeitos */
-        .typing { font-style: italic; color: #888; font-size: 0.9rem; margin-left: 10px; margin-bottom: 10px; display: none; }
-        .shake { animation: shakeBtn 0.5s; animation-iteration-count: infinite; border-color: red; }
+        .typing { font-style: italic; color: #aaa; font-size: 0.8rem; margin-bottom: 10px; display: none; }
         
-        @keyframes fadeInMsg { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes shakeBtn { 0% { transform: translateX(0); } 25% { transform: translateX(5px); } 50% { transform: translateX(0); } 75% { transform: translateX(-5px); } 100% { transform: translateX(0); } }
-
-        /* --- Tela 3: O Desenho --- */
-        #final-screen { display: none; text-align: center; opacity: 0; transition: opacity 2s; z-index: 10; }
-        img.desenho { max-width: 80%; border: 1px solid #ddd; padding: 10px; background: #fff; margin-top: 20px; }
-
-        /* --- Brilhos Pretos --- */
+        /* Brilhos Pretos */
         .sparkle {
-            position: absolute; width: 3px; height: 3px; 
-            background: black; border-radius: 50%; pointer-events: none;
-            opacity: 0; animation: floatUp 5s linear forwards;
+            position: absolute; width: 3px; height: 3px; background: black; border-radius: 50%; pointer-events: none;
+            animation: floatUp 5s linear forwards;
         }
 
         @keyframes floatUp {
             0% { transform: translateY(100vh); opacity: 0; }
-            10% { opacity: 0.5; }
-            70% { opacity: 0.5; }
-            90% { transform: translateY(30vh); opacity: 0; }
-            100% { transform: translateY(30vh); opacity: 0; }
+            10% { opacity: 0.4; }
+            80% { opacity: 0.4; }
+            100% { transform: translateY(20vh); opacity: 0; }
         }
 
+        @keyframes fadeInMsg { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        .shake { animation: shake 0.5s infinite; color: red !important; }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-4px); } 75% { transform: translateX(4px); } }
         .hidden { display: none !important; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        #final-screen { display: none; text-align: center; opacity: 0; transition: opacity 2s; }
     </style>
 </head>
 <body>
 
     <div id="start-screen">
         <div class="hello-text">hello</div>
-        <button class="btn-start" onclick="startExperience()">click me</button>
+        <button class="btn-start" onclick="start()">click me</button>
     </div>
 
     <div id="chat-container">
         <div id="chat-content"></div>
-        <div id="typing-indicator" class="typing">Clara is typing...</div>
+        <div id="typing-indicator" class="typing">Dorian is typing...</div>
     </div>
 
     <div id="final-screen">
-        <div class="hello-text" style="font-size: 2.5rem;">For you.</div>
-        <img src="desenho.jpg" class="desenho" onerror="this.src='https://via.placeholder.com/400x300?text=Your+Drawing+Here'">
+        <h2 style="font-family: 'Cormorant Upright'; font-size: 3rem;">For you.</h2>
+        <img src="desenho.jpg" style="max-width: 80%; border: 1px solid #eee; padding: 10px;">
     </div>
 
     <script>
-        const chatContent = document.getElementById('chat-content');
-        const typingIndicator = document.getElementById('typing-indicator');
+        const content = document.getElementById('chat-content');
+        const typing = document.getElementById('typing-indicator');
 
-        // Função para os Sparkles Pretos (aparecem só depois do clique)
-        let sparklesInterval;
-        function createSparkle() {
-            const sparkle = document.createElement('div');
-            sparkle.className = 'sparkle';
-            sparkle.style.left = Math.random() * 100 + 'vw';
-            document.body.appendChild(sparkle);
-            setTimeout(() => { sparkle.remove(); }, 5000);
-        }
-
-        function startExperience() {
-            // Esconde Capa
+        function start() {
             document.getElementById('start-screen').style.opacity = '0';
             setTimeout(() => {
                 document.getElementById('start-screen').classList.add('hidden');
-                
-                // Mostra Chat e começa brilhos
-                const chat = document.getElementById('chat-container');
-                chat.style.display = 'flex';
+                document.getElementById('chat-container').style.display = 'flex';
                 setTimeout(() => {
-                    chat.style.opacity = '1';
-                    // Inicia sparkles pretos lentamente
-                    sparklesInterval = setInterval(createSparkle, 700);
-                    // Começa a primeira mensagem dele
-                    showHeSays(0); 
+                    document.getElementById('chat-container').style.opacity = '1';
+                    setInterval(createSparkle, 800);
+                    nextMsg(0);
                 }, 100);
-                
-                // Futuro: Música fade-in
-                console.log("Music starts...");
-            }, 1000);
+            }, 800);
         }
 
-        // --- A Estrutura do Diálogo ---
-        const dialogueData = [
-            // [0] Ele fala
-            { type: 'he', text: 'Clara' },
-            { type: 'he', text: 'I know I said I wouldn’t talk to you anymore' },
-            { type: 'he', text: 'I’m lowkey about to have nightmares just imagining the sigh you’re gonna let out seeing I sent you this link…' },
-            { type: 'he', text: 'but, can I talk to you?' },
-            // [4] Ela decide
-            { type: 'she', options: [
-                { text: 'ugh fine', next: 7 }, // Pula pro [7]
-                { text: 'no! sorry', next: 'no' } // Mostra o `...`
-            ] },
-            // [5] Ele espera (...) se ela disser não
-            { type: 'he', text: '...' },
-            // [6] Ele força a opção 'ugh fine'
-            { type: 'force_she', text: 'ugh fine', next: 7 },
-            // [7] Ele segue
-            { type: 'he', text: 'thank you…' },
-            { type: 'he', text: 'I wanted to apologize' },
-            // [9] Ela fala (sozinha uns segundos depois)
-            { type: 'she_solo', text: 'again?', next: 11 },
-            // [10] Ele segue
-            { type: 'he', text: 'stop, you know me :(' },
-            { type: 'he', text: 'I miss having you as a friend' },
-            { type: 'he', text: 'and talking to you every day' },
-            { type: 'he', text: 'I wanted to update you on everything' },
-            { type: 'he', text: 'and know how you’ve been too' },
-            { type: 'he', text: 'if you got into college' },
-            { type: 'he', text: 'your days' },
-            { type: 'he', text: 'my days…' },
-            { type: 'he', text: 'can I entertain you for a bit?' },
-            // [19] Ela encerra
-            { type: 'she_solo', text: 'I guess lol', next: 'final' }
+        function createSparkle() {
+            const s = document.createElement('div');
+            s.className = 'sparkle';
+            s.style.left = Math.random() * 100 + 'vw';
+            document.body.appendChild(s);
+            setTimeout(() => s.remove(), 5000);
+        }
+
+        const script = [
+            { side: 'left', text: 'Clara' },
+            { side: 'left', text: 'I know I said I wouldn’t talk to you anymore' },
+            { side: 'left', text: 'I’m lowkey about to have nightmares just imagining the sigh you’re gonna let out seeing I sent you this link…' },
+            { side: 'left', text: 'but, can I talk to you?' },
+            { side: 'choose', options: [
+                { text: 'ugh fine', next: 7 },
+                { text: 'no! sorry', next: 'no' }
+            ]},
+            { side: 'left', text: '...' }, 
+            { side: 'force', text: 'ugh fine', next: 7 },
+            { side: 'left', text: 'thank you…' },
+            { side: 'left', text: 'I wanted to apologize' },
+            { side: 'right_auto', text: 'again?', next: 10 },
+            { side: 'left', text: 'stop, you know me :(' },
+            { side: 'left', text: 'I miss having you as a friend' },
+            { side: 'left', text: 'and talking to you every day' },
+            { side: 'left', text: 'I wanted to update you on everything' },
+            { side: 'left', text: 'and know how you’ve been too' },
+            { side: 'left', text: 'if you got into college' },
+            { side: 'left', text: 'your days' },
+            { side: 'left', text: 'my days…' },
+            { side: 'left', text: 'can I entertain you for a bit?' },
+            { side: 'right_auto', text: 'I guess lol', next: 'final' }
         ];
 
-        let currentStep = 0;
+        function nextMsg(idx) {
+            if (idx === 'final') { finish(); return; }
+            if (idx === 'no') { 
+                nextMsg(5); 
+                setTimeout(() => nextMsg(6), 3000); 
+                return; 
+            }
 
-        function showHeSays(step) {
-            currentStep = step;
-            if (currentStep >= dialogueData.length) return;
-
-            const data = dialogueData[currentStep];
-
-            if (data.type === 'he') {
-                typingIndicator.style.display = 'block';
-                // Tempo de digitação baseado no tamanho do texto
+            const m = script[idx];
+            if (m.side === 'left') {
+                typing.style.display = 'block';
+                // Digitação rápida: 20ms por caractere
                 setTimeout(() => {
-                    typingIndicator.style.display = 'none';
-                    appendMessage('left', data.text);
-                    // Passa para o próximo
-                    setTimeout(() => {
-                        showHeSays(currentStep + 1);
-                    }, 1000); // Espaço entre balões
-                }, data.text.length * 50); // Simula digitação
-            } else {
-                // Chegou na vez dela
-                showSheDecides(currentStep);
+                    typing.style.display = 'none';
+                    addBubble('left', m.text);
+                    setTimeout(() => nextMsg(idx + 1), 800);
+                }, m.text.length * 20);
+            } else if (m.side === 'choose') {
+                addOptions(m.options);
+            } else if (m.side === 'force') {
+                addOptions([{ text: m.text, next: m.next, shake: true }]);
+            } else if (m.side === 'right_auto') {
+                setTimeout(() => {
+                    addBubble('right', m.text);
+                    setTimeout(() => nextMsg(m.next), 1500);
+                }, 2000);
             }
         }
 
-        function showSheDecides(step) {
-            const data = dialogueData[step];
-            // Balão bege do lado direito com opções
-            const msgDiv = document.createElement('div');
-            msgDiv.className = 'message msg-right';
-            const bubble = document.createElement('div');
-            bubble.className = 'bubble-right';
-
-            if (data.type === 'she') {
-                data.options.forEach(opt => {
-                    const span = document.createElement('span');
-                    span.className = 'chat-option';
-                    span.innerText = opt.text;
-                    span.id = `opt-${opt.text.replace(/\s/g, '')}`; // ID único
-                    span.onclick = () => sheClicked(opt.next);
-                    bubble.appendChild(span);
-                });
-            } else if (data.type === 'she_solo') {
-                // Mensagem dela que aparece sozinha (again?, I guess lol)
-                setTimeout(() => {
-                    typingIndicator.style.display = 'none';
-                    appendMessage('right', data.text, () => sheClicked(data.next));
-                }, 2000); // 2 segs de espera antes dela "responder"
-                return; // Pula o append normal
-            } else if (data.type === 'force_she') {
-                // Força o botão a tremer se ela disser 'no'
-                setTimeout(() => {
-                    const shakeBtn = document.getElementById('opt-ughfine');
-                    shakeBtn.classList.add('shake');
-                    bubble.appendChild(shakeBtn);
-                }, 2000); // Segundos depois só
-            }
-
-            msgDiv.appendChild(bubble);
-            chatContent.appendChild(msgDiv);
-            scrollToBottom();
+        function addBubble(side, text) {
+            const div = document.createElement('div');
+            div.className = `message msg-${side}`;
+            div.innerHTML = `<div class="bubble-${side}">${text}</div>`;
+            content.appendChild(div);
+            document.getElementById('chat-container').scrollTop = content.scrollHeight;
         }
 
-        function sheClicked(nextStep) {
-            // Remove opções antigas se existirem
-            const oldOptions = document.querySelectorAll('.chat-option');
-            oldOptions.forEach(opt => opt.onclick = null);
-
-            if (nextStep === 'no') {
-                // Ela disse não: mostra o `...` dele e depois força
-                showHeSays(5); 
-                setTimeout(() => {
-                    // Força a opção 1 a tremer
-                    const ughFineBtn = document.getElementById('opt-ughfine');
-                    if (ughFineBtn) ughFineBtn.classList.add('shake');
-                }, 3000);
-            } else if (nextStep === 'final') {
-                // Fim do chat
-                goToFinal();
-            } else {
-                // Segue o diálogo normal
-                showHeSays(nextStep);
-            }
+        function addOptions(opts) {
+            const div = document.createElement('div');
+            div.className = 'message msg-right';
+            const b = document.createElement('div');
+            b.className = 'bubble-right';
+            opts.forEach(o => {
+                const s = document.createElement('div');
+                s.className = 'option-btn' + (o.shake ? ' shake' : '');
+                s.innerText = o.text;
+                s.onclick = () => { div.remove(); nextMsg(o.next); };
+                b.appendChild(s);
+            });
+            div.appendChild(b);
+            content.appendChild(div);
+            document.getElementById('chat-container').scrollTop = content.scrollHeight;
         }
 
-        function appendMessage(side, text, callback) {
-            const msgDiv = document.createElement('div');
-            msgDiv.className = `message msg-${side}`;
-            const bubble = document.createElement('div');
-            bubble.className = `bubble-${side}`;
-            bubble.innerText = text;
-            if (callback) bubble.onclick = callback;
-            msgDiv.appendChild(bubble);
-            chatContent.appendChild(msgDiv);
-            scrollToBottom();
-        }
-
-        function scrollToBottom() {
-            document.getElementById('chat-container').scrollTop = document.getElementById('chat-container').scrollHeight;
-        }
-
-        function goToFinal() {
-            // Esconde Chat
+        function finish() {
             document.getElementById('chat-container').style.opacity = '0';
             setTimeout(() => {
                 document.getElementById('chat-container').classList.add('hidden');
-                // Mostra Desenho
-                const final = document.getElementById('final-screen');
-                final.style.display = 'block';
-                setTimeout(() => {
-                    final.style.opacity = '1';
-                }, 100);
-            }, 1500);
+                document.getElementById('final-screen').style.display = 'block';
+                setTimeout(() => document.getElementById('final-screen').style.opacity = '1', 100);
+            }, 1000);
         }
     </script>
 </body>
