@@ -36,20 +36,26 @@
         #input-area { height: 120px; display: flex; align-items: center; justify-content: center; width: 100%; border-top: 1px solid #eee; background: white; z-index: 100; }
         .option-chip { background: #f5f5dc; padding: 14px 28px; border-radius: 30px; cursor: pointer; border: 1px solid #ddd; }
 
-        /* --- Jogo com Chão Preto --- */
+        /* --- Jogo --- */
         #game-stage { 
             width: 100vw; height: 400px; 
             position: relative; overflow: hidden; 
-            background: linear-gradient(to bottom, #fff 80%, #000 80%); /* Chão totalmente preto */
+            background: #fff;
             display: flex; align-items: flex-end;
         }
+        
+        /* Chão Totalmente Preto */
+        #ground {
+            position: absolute; bottom: 0; left: 0; width: 100%; height: 20%;
+            background: #000; z-index: 2;
+        }
+
         #player { position: absolute; bottom: 20%; left: 15%; width: 70px; height: 70px; z-index: 10; transform-origin: bottom center; }
         #hit-text { position: absolute; top: -45px; left: 50%; transform: translateX(-50%); background: black; color: white; padding: 4px 12px; border-radius: 8px; font-size: 0.75rem; font-weight: bold; opacity: 0; transition: 0.1s; white-space: nowrap; z-index: 20; }
 
         .cloud { position: absolute; opacity: 0.15; z-index: 1; pointer-events: none; }
-
-        /* Brilhos (Sparkles) */
         .sparkle { position: absolute; background: #000; border-radius: 50%; pointer-events: none; z-index: 0; }
+        
         @keyframes fall { 
             0% { transform: translateY(-50px) rotate(0deg); opacity: 0; }
             20% { opacity: 0.6; }
@@ -65,15 +71,15 @@
         .landed { animation: landImpact 0.25s forwards; }
         @keyframes landImpact { 0% { transform: scale(1.7, 0.3); } 50% { transform: scale(1.2, 0.8); } 100% { transform: scale(1, 1); } }
 
-        .obstacle { position: absolute; bottom: calc(20% + 15px); right: -100px; width: 75px; height: 75px; z-index: 5; }
+        .obstacle { position: absolute; bottom: 20%; right: -150px; width: 100px; height: 100px; z-index: 5; }
         
         .hit-effect { filter: invert(20%) sepia(100%) saturate(500%) !important; animation: vibrate 0.1s linear 3; }
+        @keyframes vibrate { 0% { transform: translateX(4px); } 100% { transform: translateX(-4px); } }
 
-        /* Fonte da Contagem mais "Game" */
         #countdown { 
             font-size: 6rem; font-family: 'Arial Black', sans-serif; font-weight: 900;
             position: absolute; top: 15%; left: 50%; transform: translateX(-50%); 
-            z-index: 2; color: #000; text-shadow: 4px 4px #f5f5dc;
+            z-index: 20; color: #000; text-shadow: 4px 4px #f5f5dc;
         }
         @keyframes fadeInMsg { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
     </style>
@@ -97,6 +103,7 @@
     <div id="game-wrapper">
         <div id="game-stage" onmousedown="playerJump()" ontouchstart="playerJump()">
             <div id="countdown"></div>
+            <div id="ground"></div>
             <div id="player" class="walking">
                 <div id="hit-text">OW!</div>
                 <img src="pfp.png" width="70" id="pfp-img" style="border-radius:12px;">
@@ -190,7 +197,7 @@
             });
         }
 
-        // --- Sparkle Rain (Chuva de Brilhos) ---
+        // --- Sparkle Rain ---
         function createSparkle() {
             const s = document.createElement('div');
             s.className = 'sparkle';
@@ -199,11 +206,8 @@
             s.style.height = size + 'px';
             s.style.left = Math.random() * 100 + 'vw';
             s.style.top = '-10px';
-            
-            // Se o jogo estiver ativo, cai como chuva. Se não, flutua levemente.
             const duration = gameActive ? (Math.random() * 2 + 1) : (Math.random() * 5 + 3);
             s.style.animation = `fall ${duration}s linear forwards`;
-            
             document.body.appendChild(s);
             setTimeout(() => s.remove(), duration * 1000);
         }
@@ -269,9 +273,9 @@
             if (!gameActive) return;
             let groupSize = Math.floor(Math.random() * 2) + 1; 
             for(let i = 0; i < groupSize; i++) {
-                setTimeout(() => createObstacle(), i * 320);
+                setTimeout(() => createObstacle(), i * 380);
             }
-            let nextSpawn = Math.random() * 1200 + 900; 
+            let nextSpawn = Math.random() * 1200 + 1000; 
             setTimeout(spawnObs, nextSpawn);
         }
 
@@ -279,10 +283,10 @@
             if(!gameActive) return;
             const obs = document.createElement('div');
             obs.className = 'obstacle';
-            obs.innerHTML = `<img src="obj.png" width="75">`;
+            obs.innerHTML = `<img src="obj.png" width="100">`; // Maior!
             stage.appendChild(obs);
 
-            let pos = -100;
+            let pos = -150;
             const move = setInterval(() => {
                 if (!gameActive) { clearInterval(move); obs.remove(); return; }
                 pos += 12.5; obs.style.right = pos + 'px';
@@ -290,7 +294,7 @@
                 const pRect = document.getElementById('player').getBoundingClientRect();
                 const oRect = obs.getBoundingClientRect();
                 
-                if (oRect.left < pRect.right - 25 && oRect.right > pRect.left + 25 && oRect.top < pRect.bottom - 15) {
+                if (oRect.left < pRect.right - 35 && oRect.right > pRect.left + 35 && oRect.top < pRect.bottom - 10) {
                     if (!pfpImg.classList.contains('hit-effect')) {
                         pfpImg.classList.add('hit-effect');
                         hitLabel.innerText = hitPhrases[Math.floor(Math.random()*hitPhrases.length)];
@@ -299,7 +303,7 @@
                     }
                 }
 
-                if (pos > window.innerWidth + 120) {
+                if (pos > window.innerWidth + 200) {
                     clearInterval(move); obs.remove(); score++;
                     if (score >= 35) { gameActive = false; setTimeout(() => changeScreen('game-wrapper', 'final-screen'), 500); }
                 }
