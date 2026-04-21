@@ -39,15 +39,15 @@
 
         /* --- Jogo --- */
         #game-stage { 
-            width: 100vw; height: 350px; border-bottom: 4px solid #1a1a1a; 
+            width: 100vw; height: 380px; border-bottom: 4px solid #1a1a1a; 
             position: relative; overflow: hidden; background: #fff;
             display: flex; align-items: flex-end;
         }
         #player { position: absolute; bottom: 0; left: 15%; width: 70px; height: 70px; z-index: 10; transform-origin: bottom center; }
         #hit-text { position: absolute; top: -45px; left: 50%; transform: translateX(-50%); background: black; color: white; padding: 4px 12px; border-radius: 8px; font-size: 0.75rem; font-weight: bold; opacity: 0; transition: 0.1s; white-space: nowrap; z-index: 20; }
 
-        /* Nuvens */
-        .cloud { position: absolute; opacity: 0.25; z-index: 1; pointer-events: none; }
+        /* Nuvens Maiores */
+        .cloud { position: absolute; opacity: 0.15; z-index: 1; pointer-events: none; }
 
         .walking { animation: walkElastic 0.4s infinite alternate ease-in-out; }
         @keyframes walkElastic { from { transform: rotate(-5deg); } to { transform: rotate(5deg); } }
@@ -196,7 +196,7 @@
         function startGame() { 
             gameActive = true; 
             spawnObs(); 
-            setInterval(spawnCloud, 2000); 
+            setInterval(spawnCloud, 1800); 
         }
 
         function spawnCloud() {
@@ -204,18 +204,18 @@
             const cloud = document.createElement('img');
             cloud.src = 'obj-cloud.png';
             cloud.className = 'cloud';
-            cloud.style.width = (Math.random() * 80 + 60) + 'px';
-            cloud.style.top = (Math.random() * 100 + 20) + 'px';
-            cloud.style.right = '-150px';
+            cloud.style.width = (Math.random() * 120 + 130) + 'px'; // Aumentei o tamanho aqui
+            cloud.style.top = (Math.random() * 80 + 10) + 'px';
+            cloud.style.right = '-200px';
             stage.appendChild(cloud);
 
-            let pos = -150;
-            let speed = Math.random() * 2 + 3;
+            let pos = -200;
+            let speed = Math.random() * 1.5 + 2.5;
             const moveCloud = setInterval(() => {
                 if(!gameActive) { clearInterval(moveCloud); cloud.remove(); return; }
                 pos += speed;
                 cloud.style.right = pos + 'px';
-                if (pos > window.innerWidth + 200) { clearInterval(moveCloud); cloud.remove(); }
+                if (pos > window.innerWidth + 250) { clearInterval(moveCloud); cloud.remove(); }
             }, 20);
         }
 
@@ -238,13 +238,13 @@
         function spawnObs() {
             if (!gameActive) return;
             
-            // Lógica de "Grupos" tipo Dino Run
-            let groupSize = Math.floor(Math.random() * 3) + 1; // Grupos de 1 a 3
+            // Limitado a no máximo 2 obstáculos por grupo
+            let groupSize = Math.floor(Math.random() * 2) + 1; 
             for(let i = 0; i < groupSize; i++) {
-                setTimeout(() => createObstacle(), i * 250); // Delay curto entre eles
+                setTimeout(() => createObstacle(), i * 320); // Delay levemente maior entre eles para ser justo
             }
 
-            let nextSpawn = Math.random() * 1000 + 800; // Tempo até o próximo grupo
+            let nextSpawn = Math.random() * 1200 + 900; 
             setTimeout(spawnObs, nextSpawn);
         }
 
@@ -258,7 +258,7 @@
             let pos = -100;
             const move = setInterval(() => {
                 if (!gameActive) { clearInterval(move); obs.remove(); return; }
-                pos += 12; obs.style.right = pos + 'px';
+                pos += 11.5; obs.style.right = pos + 'px';
 
                 const pRect = document.getElementById('player').getBoundingClientRect();
                 const oRect = obs.getBoundingClientRect();
