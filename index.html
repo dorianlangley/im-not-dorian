@@ -23,7 +23,7 @@
 
         #start-screen { display: flex; opacity: 1; z-index: 100; pointer-events: all; }
 
-        .hello-text { font-family: 'Cormorant Upright', serif; font-size: 4rem; color: #1a1a1a; margin-bottom: 40px; text-align: center; padding: 0 20px; }
+        .hello-text { font-family: 'Cormorant Upright', serif; font-size: 3.5rem; color: #1a1a1a; margin-bottom: 40px; text-align: center; }
         .btn-start {
             padding: 18px 50px; font-size: 1.1rem; border: 1px solid #1a1a1a; cursor: pointer;
             background-color: #f5f5dc; color: black; border-radius: 50px; transition: 0.3s;
@@ -32,82 +32,69 @@
 
         /* --- Chat --- */
         #chat-wrapper { width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; }
-        #chat-container { 
-            width: 100%; max-width: 500px; height: 75vh; 
-            overflow-y: auto; padding: 20px; 
-            display: flex; flex-direction: column; 
-            scroll-behavior: smooth; margin: 0 auto;
-            pointer-events: all;
-        }
+        #chat-container { width: 100%; max-width: 500px; height: 75vh; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; scroll-behavior: smooth; margin: 0 auto; pointer-events: all; }
         #chat-container::-webkit-scrollbar { width: 0px; }
-        
         .message { margin-bottom: 20px; display: flex; opacity: 0; animation: fadeInMsg 0.5s forwards; width: 100%; }
         .msg-left { justify-content: flex-start; }
         .msg-right { justify-content: flex-end; }
         .bubble-left { background: #1a1a1a; color: #f5f5dc; padding: 14px 20px; border-radius: 20px 20px 20px 0; max-width: 85%; }
         .bubble-right { background: #f5f5dc; color: black; padding: 14px 20px; border-radius: 20px 20px 0 20px; max-width: 85%; }
-        
-        #input-area { height: 120px; width: 100%; max-width: 500px; display: flex; align-items: center; justify-content: center; border-top: 1px solid #eee; background: white; margin: 0 auto; pointer-events: all; }
+        #input-area { height: 100px; width: 100%; max-width: 500px; display: flex; align-items: center; justify-content: center; border-top: 1px solid #eee; background: white; margin: 0 auto; pointer-events: all; }
         .option-chip { background: #f5f5dc; padding: 14px 28px; border-radius: 30px; cursor: pointer; border: 1px solid #ddd; }
 
-        /* --- Jogo (Ajustado para Mobile) --- */
+        /* --- Jogo (Estilo Dino do Google) --- */
         #game-wrapper { width: 100vw; height: 100vh; background: #fff; overflow: hidden; display: flex; flex-direction: column; }
         #game-stage { 
             width: 100%; flex: 1; position: relative; 
             overflow: hidden; display: flex; align-items: flex-end; 
-            pointer-events: all; cursor: pointer;
+            pointer-events: all;
         }
-        #ground { width: 100%; height: 15vh; background: #000; z-index: 20; position: relative; }
+        #ground { width: 100%; height: 25vh; background: #000; z-index: 20; position: relative; }
 
-        #player { position: absolute; bottom: 0; left: 10%; width: 60px; height: 60px; z-index: 25; transform-origin: bottom center; }
+        /* Player menor para dar sensação de espaço */
+        #player { position: absolute; bottom: 0; left: 10%; width: 45px; height: 45px; z-index: 25; transform-origin: bottom center; }
         
         .obstacle { 
-            position: absolute; bottom: 0; right: -100px; width: 80px; height: 80px; z-index: 22; 
+            position: absolute; bottom: 0; right: -60px; width: 50px; height: 50px; z-index: 22; 
             transform-origin: bottom center; animation: jellyWalk 0.6s infinite alternate ease-in-out;
         }
         @keyframes jellyWalk {
-            0% { transform: scale(1.15, 0.8); }
-            100% { transform: scale(0.85, 1.15); }
+            0% { transform: scale(1.2, 0.8); }
+            100% { transform: scale(0.8, 1.2); }
         }
 
-        .cloud { position: absolute; opacity: 0.15; z-index: 1; pointer-events: none; }
+        .cloud { position: absolute; opacity: 0.1; z-index: 1; pointer-events: none; }
         .sparkle { position: absolute; background: #000; border-radius: 50%; pointer-events: none; z-index: 5; }
 
         @keyframes fall { 0% { transform: translateY(-50px); opacity: 0; } 100% { transform: translateY(110vh); opacity: 0; } }
 
         .walking { animation: walkElastic 0.4s infinite alternate ease-in-out; }
-        @keyframes walkElastic { from { transform: rotate(-8deg); } to { transform: rotate(8deg); } }
+        @keyframes walkElastic { from { transform: rotate(-10deg); } to { transform: rotate(10deg); } }
 
         .jumping { animation: jumpStretch 0.5s forwards; }
-        @keyframes jumpStretch {
-            0% { transform: scale(1, 1); }
-            50% { transform: scale(0.7, 1.4); }
-            100% { transform: scale(1, 1); }
-        }
+        @keyframes jumpStretch { 0% { transform: scale(1, 1); } 50% { transform: scale(0.8, 1.3); } 100% { transform: scale(1, 1); } }
 
-        .landed { animation: landImpact 0.25s forwards; }
-        @keyframes landImpact {
-            0% { transform: scale(1.8, 0.3); }
-            50% { transform: scale(1.3, 0.7); }
-            100% { transform: scale(1, 1); }
-        }
+        .landed { animation: landImpact 0.2s forwards; }
+        @keyframes landImpact { 0% { transform: scale(1.6, 0.4); } 100% { transform: scale(1, 1); } }
 
         #countdown { 
-            font-size: 6rem; font-family: 'Arial Black', sans-serif; font-weight: 900;
-            position: absolute; top: 20%; left: 50%; transform: translateX(-50%); 
+            font-size: 5rem; font-family: 'Arial Black', sans-serif; font-weight: 900;
+            position: absolute; top: 15%; left: 50%; transform: translateX(-50%); 
             z-index: 30; color: #000;
         }
 
-        #hit-text { position: absolute; top: -45px; left: 50%; transform: translateX(-50%); background: black; color: white; padding: 4px 12px; border-radius: 8px; font-size: 0.75rem; font-weight: bold; opacity: 0; z-index: 40; }
-        .hit-effect { filter: invert(20%) sepia(100%) saturate(500%) !important; animation: vibrate 0.1s linear 3; }
+        #hit-text { position: absolute; top: -35px; left: 50%; transform: translateX(-50%); background: black; color: white; padding: 2px 8px; border-radius: 5px; font-size: 0.6rem; opacity: 0; z-index: 40; }
+        .hit-effect { filter: grayscale(1) contrast(200%); animation: vibrate 0.1s linear 2; }
+        @keyframes vibrate { 0% { transform: translateX(3px); } 100% { transform: translateX(-3px); } }
 
-        @keyframes fadeInMsg { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-
+        /* Responsividade para Desktop */
         @media (min-width: 600px) {
-            #player { width: 75px; height: 75px; left: 15%; }
-            .obstacle { width: 100px; height: 100px; }
-            .hello-text { font-size: 5.5rem; }
+            #player { width: 65px; height: 65px; left: 15%; }
+            .obstacle { width: 80px; height: 80px; }
+            .hello-text { font-size: 5rem; }
         }
+
+        @keyframes fadeInMsg { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
@@ -127,18 +114,18 @@
 
     <div id="game-wrapper" class="screen">
         <div id="countdown"></div>
-        <div id="game-stage" onmousedown="playerJump(event)" ontouchstart="playerJump(event)">
+        <div id="game-stage" onmousedown="playerJump()" ontouchstart="playerJump()">
             <div id="player" class="walking">
                 <div id="hit-text">OW!</div>
-                <img src="pfp.png" width="100%" id="pfp-img" style="border-radius:12px; display: block;">
+                <img src="pfp.png" width="100%" id="pfp-img" style="border-radius:8px; display: block;">
             </div>
         </div>
         <div id="ground"></div>
     </div>
 
     <div id="final-screen" class="screen">
-        <h2 class="hello-text" style="font-size: 3rem;">For you.</h2>
-        <img src="desenho.jpg" style="max-width: 85%; height: auto; border: 1px solid #eee;">
+        <h2 class="hello-text" style="font-size: 2.5rem;">For you.</h2>
+        <img src="desenho.jpg" style="max-width: 80%; height: auto; border: 1px solid #eee; padding: 5px;">
     </div>
 
     <script>
@@ -149,7 +136,7 @@
         const pfpImg = document.getElementById('pfp-img');
         const hitLabel = document.getElementById('hit-text');
         const stage = document.getElementById('game-stage');
-        let isProcessing = false, gameActive = false;
+        let isProcessing = false, gameActive = false, isJumping = false, score = 0;
 
         function scrollChat() { chatContainer.scrollTo({ top: chatContainer.scrollHeight, behavior: 'smooth' }); }
 
@@ -165,22 +152,11 @@
         const script = [
             { side: 'left', text: 'Clara' },
             { side: 'left', text: 'I know I said I wouldn’t talk to you anymore' },
-            { side: 'left', text: 'I’m lowkey about to have nightmares imagining you seeing this...' },
             { side: 'left', text: 'but, can I talk to you?' },
-            { side: 'choose', options: [{ text: 'ugh fine', next: 7 }, { text: 'no! sorry', next: 'no' }] },
-            { side: 'left', text: '...' },
-            { side: 'choose_forced', options: [{ text: 'ugh fine', next: 7 }] },
+            { side: 'choose', options: [{ text: 'ugh fine', next: 4 }, { text: 'no! sorry', next: 'no' }] },
             { side: 'left', text: 'thank you…' },
             { side: 'left', text: 'I wanted to apologize' },
-            { side: 'right_auto', text: 'again?', next: 10 },
-            { side: 'left', text: 'stop, you know me :(' },
             { side: 'left', text: 'I miss having you as a friend' },
-            { side: 'left', text: 'and talking to you every day' },
-            { side: 'left', text: 'I wanted to update you on everything' },
-            { side: 'left', text: 'and know how you’ve been too' },
-            { side: 'left', text: 'if you got into college' },
-            { side: 'left', text: 'your days' },
-            { side: 'left', text: 'my days…' },
             { side: 'left', text: 'can I entertain you for a bit?' },
             { side: 'right_auto', text: 'I guess lol', next: 'game' }
         ];
@@ -194,14 +170,14 @@
                 addBubble('right', 'no! sorry');
                 setTimeout(() => {
                     typing.style.display = 'block'; scrollChat();
-                    setTimeout(() => { typing.style.display = 'none'; addBubble('left', '...'); setTimeout(() => displayOptions([{ text: 'ugh fine', next: 7 }]), 1000); }, 1200);
+                    setTimeout(() => { typing.style.display = 'none'; addBubble('left', '...'); setTimeout(() => displayOptions([{ text: 'ugh fine', next: 4 }]), 1000); }, 1200);
                 }, 600);
                 return;
             }
             const m = script[idx]; if (!m) return;
             if (m.side === 'left') {
                 typing.style.display = 'block'; scrollChat();
-                setTimeout(() => { typing.style.display = 'none'; addBubble('left', m.text); setTimeout(() => runScript(idx + 1), 700); }, Math.max(1000, m.text.length * 20));
+                setTimeout(() => { typing.style.display = 'none'; addBubble('left', m.text); setTimeout(() => runScript(idx + 1), 800); }, Math.max(1000, m.text.length * 20));
             } else if (m.side === 'choose') { displayOptions(m.options); }
             else if (m.side === 'right_auto') { setTimeout(() => { addBubble('right', m.text); setTimeout(() => runScript(m.next), 800); }, 1600); }
         }
@@ -223,7 +199,7 @@
 
         function createSparkle() {
             const s = document.createElement('div'); s.className = 'sparkle';
-            const size = Math.random() * 5 + 2;
+            const size = Math.random() * 4 + 2;
             s.style.width = size + 'px'; s.style.height = size + 'px';
             s.style.left = Math.random() * 100 + 'vw'; s.style.top = '-10px';
             const d = gameActive ? (Math.random() * 2 + 1.5) : (Math.random() * 5 + 3);
@@ -231,7 +207,7 @@
             document.body.appendChild(s);
             setTimeout(() => s.remove(), d * 1000);
         }
-        setInterval(createSparkle, 150);
+        setInterval(createSparkle, 180);
 
         function startCountdown() {
             let count = 3; const cd = document.getElementById('countdown');
@@ -247,30 +223,27 @@
         function spawnCloud() {
             if(!gameActive) return;
             const cloud = document.createElement('img'); cloud.src = 'obj-cloud.png'; cloud.className = 'cloud';
-            cloud.style.width = (Math.random() * 80 + 100) + 'px'; cloud.style.top = (Math.random() * 150 + 20) + 'px';
-            cloud.style.right = '-150px'; stage.appendChild(cloud);
-            let pos = -150; let speed = Math.random() * 1 + 1.5;
+            cloud.style.width = (Math.random() * 60 + 80) + 'px'; cloud.style.top = (Math.random() * 120 + 20) + 'px';
+            cloud.style.right = '-100px'; stage.appendChild(cloud);
+            let pos = -100; let speed = Math.random() * 0.8 + 1.2;
             const moveCloud = setInterval(() => {
                 if(!gameActive) { clearInterval(moveCloud); cloud.remove(); return; }
                 pos += speed; cloud.style.right = pos + 'px';
-                if (pos > window.innerWidth + 200) { clearInterval(moveCloud); cloud.remove(); }
+                if (pos > window.innerWidth + 120) { clearInterval(moveCloud); cloud.remove(); }
             }, 20);
         }
 
-        let isJumping = false, score = 0;
-
-        function playerJump(e) {
-            if (e) e.preventDefault();
+        function playerJump() {
             if (isJumping || !gameActive) return;
             isJumping = true; const p = document.getElementById('player');
             p.classList.remove('walking', 'landed'); p.classList.add('jumping');
-            let b = 0, v = 18, g = 0.9; 
+            let b = 0, v = 15, g = 0.75; // Gravidade mais leve para controle suave
             const jumpInterval = setInterval(() => {
                 v -= g; b += v;
                 if (b <= 0) {
                     b = 0; clearInterval(jumpInterval); p.style.bottom = '0px';
                     p.classList.remove('jumping'); p.classList.add('landed');
-                    setTimeout(() => { p.classList.remove('landed'); p.classList.add('walking'); isJumping = false; }, 250);
+                    setTimeout(() => { p.classList.remove('landed'); p.classList.add('walking'); isJumping = false; }, 200);
                 }
                 p.style.bottom = b + 'px';
             }, 20);
@@ -279,35 +252,35 @@
         function spawnObs() {
             if (!gameActive) return;
             let groupSize = Math.floor(Math.random() * 2) + 1; 
-            for(let i = 0; i < groupSize; i++) { setTimeout(() => createObstacle(), i * 450); }
-            setTimeout(spawnObs, Math.random() * 1500 + 1200);
+            for(let i = 0; i < groupSize; i++) { setTimeout(() => createObstacle(), i * 400); }
+            setTimeout(spawnObs, Math.random() * 1800 + 1000);
         }
 
         function createObstacle() {
             if(!gameActive) return;
             const obs = document.createElement('div'); obs.className = 'obstacle';
-            const size = window.innerWidth < 600 ? 80 : 100;
+            const size = window.innerWidth < 600 ? 50 : 80;
             obs.innerHTML = `<img src="obj.png" width="${size}">`; stage.appendChild(obs);
             let pos = -size;
-            let speed = window.innerWidth < 600 ? 10 : 14; // Mais devagar no celular para compensar a tela fina
+            let speed = window.innerWidth < 600 ? 7 : 11; // Velocidade reduzida no mobile para visibilidade
             const move = setInterval(() => {
                 if (!gameActive) { clearInterval(move); obs.remove(); return; }
                 pos += speed; obs.style.right = pos + 'px';
                 const pRect = document.getElementById('pfp-img').getBoundingClientRect();
                 const oRect = obs.getBoundingClientRect();
-                if (oRect.left < pRect.right - 20 && oRect.right > pRect.left + 20 && oRect.top < pRect.bottom - 10) {
+                if (oRect.left < pRect.right - 15 && oRect.right > pRect.left + 15 && oRect.top < pRect.bottom - 5) {
                     if (!pfpImg.classList.contains('hit-effect')) {
                         pfpImg.classList.add('hit-effect'); hitLabel.style.opacity = "1";
                         setTimeout(() => { pfpImg.classList.remove('hit-effect'); hitLabel.style.opacity = "0"; }, 400);
                     }
                 }
-                if (pos > window.innerWidth + 150) { clearInterval(move); obs.remove(); score++;
+                if (pos > window.innerWidth + 100) { clearInterval(move); obs.remove(); score++;
                     if (score >= 35) { gameActive = false; setTimeout(() => changeScreen('game-wrapper', 'final-screen'), 500); }
                 }
             }, 20);
         }
 
-        window.addEventListener('keydown', (e) => { if (e.code === 'Space') playerJump(); });
+        window.addEventListener('keydown', (e) => { if (e.code === 'Space' || e.key === 'ArrowUp') playerJump(); });
     </script>
 </body>
 </html>
