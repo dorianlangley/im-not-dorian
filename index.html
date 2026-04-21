@@ -61,22 +61,29 @@
         .walking { animation: walkElastic 0.4s infinite alternate ease-in-out; }
         @keyframes walkElastic { from { transform: rotate(-5deg); } to { transform: rotate(5deg); } }
 
-        /* O Pulo Legal que Amassa */
-        .jumping { animation: jumpElastic 0.7s cubic-bezier(0.4, 0, 0.2, 1); }
-        @keyframes jumpElastic {
-            0% { transform: scale(1.6, 0.4); }   /* Amassa no chão */
-            30% { transform: scale(0.7, 1.4); }  /* Estica subindo */
-            50% { transform: scale(1, 1); }      /* Normal no topo */
-            90% { transform: scale(0.8, 1.2); }  /* Prepara queda */
-            100% { transform: scale(1.6, 0.4); } /* Amassa no impacto */
+        /* Animação de Pulo Ativa */
+        .jumping { animation: jumpCycle 0.6s forwards; }
+        @keyframes jumpCycle {
+            0% { transform: scale(1.6, 0.4); } 
+            20% { transform: scale(0.7, 1.4); }
+            50% { transform: scale(1, 1); }
+            100% { transform: scale(1, 1); }
+        }
+
+        /* NOVA: Animação de Impacto (Pouso) */
+        .landed { animation: landImpact 0.25s forwards; }
+        @keyframes landImpact {
+            0% { transform: scale(1.7, 0.3); } /* Super amasso no contato */
+            50% { transform: scale(1.2, 0.8); } /* Recuperando devagar */
+            100% { transform: scale(1, 1); }     /* Volta ao normal */
         }
 
         .obstacle { 
-            position: absolute; bottom: 15px; right: -100px; 
+            position: absolute; bottom: 18px; right: -100px; 
             width: 85px; height: 85px;
             animation: floaty 0.8s infinite alternate ease-in-out; 
         }
-        @keyframes floaty { from { transform: translateY(0) scale(1); } to { transform: translateY(-10px) scale(1.05); } }
+        @keyframes floaty { from { transform: translateY(0); } to { transform: translateY(-10px); } }
 
         .hit-effect { filter: invert(20%) sepia(100%) saturate(500%) !important; animation: vibrate 0.1s linear 3; }
         @keyframes vibrate { 0% { transform: translateX(4px); } 100% { transform: translateX(-4px); } }
@@ -253,18 +260,27 @@
             if (isJumping || !gameActive) return;
             isJumping = true;
             const p = document.getElementById('player');
-            p.classList.remove('walking'); p.classList.add('jumping');
             
-            let b = 0, v = 17.5, g = 0.92; 
+            p.classList.remove('walking', 'landed'); 
+            p.classList.add('jumping');
+            
+            let b = 0, v = 18, g = 0.95; 
             const jumpInterval = setInterval(() => {
                 v -= g; b += v;
                 if (b <= 0) {
-                    b = 0; clearInterval(jumpInterval);
+                    b = 0; 
+                    clearInterval(jumpInterval);
                     p.style.bottom = '0px';
+                    
+                    // Lógica de Pouso (Land)
+                    p.classList.remove('jumping');
+                    p.classList.add('landed');
+                    
                     setTimeout(() => {
+                        p.classList.remove('landed');
+                        p.classList.add('walking');
                         isJumping = false;
-                        p.classList.remove('jumping'); p.classList.add('walking');
-                    }, 150);
+                    }, 250); // Tempo exato da animação landed
                 }
                 p.style.bottom = b + 'px';
             }, 20);
@@ -281,7 +297,8 @@
             let pos = -100;
             const move = setInterval(() => {
                 if (!gameActive) { clearInterval(move); obs.remove(); return; }
-                pos += 12; obs.style.right = pos + 'px';
+                pos += 10.5; 
+                obs.style.right = pos + 'px';
 
                 const pRect = document.getElementById('player').getBoundingClientRect();
                 const oRect = obs.getBoundingClientRect();
@@ -304,7 +321,7 @@
                         gameActive = false; 
                         setTimeout(() => changeScreen('game-wrapper', 'final-screen'), 500); 
                     }
-                    else { setTimeout(spawnObs, Math.random() * 300 + 100); } // Mais rápido e frenético
+                    else { setTimeout(spawnObs, Math.random() * 300 + 100); }
                 }
             }, 20);
         }
