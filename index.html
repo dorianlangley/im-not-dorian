@@ -25,42 +25,50 @@
             background-color: #f5f5dc; color: black; border-radius: 50px; transition: 0.3s;
         }
 
-        /* --- Chat com Enquadramento Automático --- */
+        /* --- Chat com Scroll Melhorado --- */
         #chat-container { 
             flex: 1; overflow-y: auto; padding: 20px; display: flex; 
             flex-direction: column; width: 100%; height: 60vh;
             scroll-behavior: smooth;
+            padding-bottom: 50px; /* Espaço extra para o "typing" não sumir */
         }
         #chat-container::-webkit-scrollbar { width: 0px; }
 
         .message { margin-bottom: 15px; display: flex; opacity: 0; animation: fadeInMsg 0.4s forwards; }
         .msg-left { justify-content: flex-start; }
         .msg-right { justify-content: flex-end; }
-        .bubble-left { background: #1a1a1a; color: #f5f5dc; padding: 12px 18px; border-radius: 18px 18px 18px 0; max-width: 80%; font-size: 0.95rem; line-height: 1.4; }
-        .bubble-right { background: #f5f5dc; color: black; padding: 12px 18px; border-radius: 18px 18px 0 18px; max-width: 80%; font-size: 0.95rem; line-height: 1.4; }
+        .bubble-left { background: #1a1a1a; color: #f5f5dc; padding: 12px 18px; border-radius: 18px 18px 18px 0; max-width: 80%; font-size: 0.95rem; }
+        .bubble-right { background: #f5f5dc; color: black; padding: 12px 18px; border-radius: 18px 18px 0 18px; max-width: 80%; font-size: 0.95rem; }
         
-        #input-area { height: 90px; display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; border-top: 1px solid #eee; background: white; }
-        .option-chip { background: #f5f5dc; padding: 12px 24px; border-radius: 25px; cursor: pointer; transition: 0.2s; border: 1px solid transparent; font-size: 0.9rem; }
-        .typing { font-style: italic; color: #aaa; font-size: 0.8rem; padding: 10px 20px; display: none; }
+        #input-area { height: 100px; display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; border-top: 1px solid #eee; background: white; z-index: 20; }
+        .option-chip { background: #f5f5dc; padding: 12px 24px; border-radius: 25px; cursor: pointer; border: 1px solid transparent; }
+        .typing { font-style: italic; color: #aaa; font-size: 0.8rem; padding: 10px 20px; display: none; width: 100%; }
 
         /* --- Jogo --- */
-        #game-stage { width: 100%; height: 300px; border-bottom: 2px solid #1a1a1a; position: relative; overflow: hidden; background: #fff; }
+        #game-stage { 
+            width: 100vw; /* Piso agora atravessa a tela toda */
+            height: 300px; 
+            border-bottom: 2px solid #1a1a1a; 
+            position: relative; 
+            overflow: hidden; 
+            background: #fff; 
+        }
         #player { 
-            position: absolute; bottom: 0; left: 80px; width: 65px; height: 65px; z-index: 5;
+            position: absolute; bottom: 0; left: 20%; width: 65px; height: 65px; z-index: 5;
             transform-origin: bottom center;
         }
 
         .walking { animation: walkElastic 0.5s infinite alternate ease-in-out; }
         @keyframes walkElastic { from { transform: rotate(-6deg); } to { transform: rotate(6deg); } }
 
-        /* Pulo com Squash/Stretch e Impacto no final */
+        /* Pulo com IMPACTO aumentado */
         .jumping { animation: jumpCycle 0.7s ease-in-out; }
         @keyframes jumpCycle {
-            0% { transform: scale(1.3, 0.7); } /* Squash inicial */
-            30% { transform: scale(0.8, 1.3); } /* Stretch subida */
+            0% { transform: scale(1.5, 0.5); }   /* Amassa MUITO no começo */
+            30% { transform: scale(0.7, 1.4); }   /* Estica na subida */
             50% { transform: scale(1, 1); }
             90% { transform: scale(1, 1); }
-            100% { transform: scale(1.2, 0.8); } /* Impacto ao tocar o chão */
+            100% { transform: scale(1.4, 0.6); }  /* Amassa MUITO ao cair */
         }
 
         .hit-effect { 
@@ -68,15 +76,15 @@
             animation: vibrate 0.2s linear infinite;
         }
         @keyframes vibrate {
-            0% { transform: translate(2px, 0); }
-            50% { transform: translate(-2px, 0); }
-            100% { transform: translate(2px, 0); }
+            0% { transform: translate(3px, 0); }
+            50% { transform: translate(-3px, 0); }
+            100% { transform: translate(3px, 0); }
         }
 
         .obstacle { position: absolute; bottom: 0; right: -50px; width: 35px; height: 35px; }
         #countdown { font-size: 5rem; font-family: 'Cormorant Upright'; position: absolute; top: 20%; left: 50%; transform: translateX(-50%); z-index: 10; }
 
-        /* --- Geral --- */
+        /* --- Brilhos --- */
         .sparkle { position: absolute; width: 3px; height: 3px; background: #000; border-radius: 50%; pointer-events: none; animation: floatUp 5s linear forwards; }
         @keyframes floatUp { 0% { transform: translateY(100vh); opacity: 0.7; } 100% { transform: translateY(-10vh); opacity: 0; } }
         @keyframes fadeInMsg { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
@@ -96,7 +104,7 @@
     </div>
 
     <div id="game-wrapper">
-        <div id="game-info" style="text-align: center; margin-bottom: 10px; font-weight: 300;">W, Space, ↑ or Tap</div>
+        <div id="game-info" style="text-align: center; margin-bottom: 10px; font-weight: 300; width: 100%;">Jump to keep moving</div>
         <div id="game-stage" onmousedown="playerJump()" ontouchstart="playerJump()">
             <div id="countdown"></div>
             <div id="player" class="walking"><img src="pfp.png" width="65" id="pfp-img" style="border-radius:10px;"></div>
@@ -161,7 +169,7 @@
                 addBubble('right', 'no! sorry');
                 setTimeout(() => {
                     typing.style.display = 'block';
-                    scrollToBottom();
+                    autoScroll();
                     setTimeout(() => {
                         typing.style.display = 'none';
                         addBubble('left', '...');
@@ -176,7 +184,7 @@
 
             if (m.side === 'left') {
                 typing.style.display = 'block';
-                scrollToBottom();
+                autoScroll();
                 setTimeout(() => {
                     typing.style.display = 'none';
                     addBubble('left', m.text);
@@ -195,15 +203,15 @@
             const div = document.createElement('div'); div.className = `message msg-${side}`;
             div.innerHTML = `<div class="bubble-${side}">${text}</div>`;
             chatContainer.appendChild(div);
-            scrollToBottom();
+            autoScroll();
         }
 
-        function scrollToBottom() {
-            // Garante que o último elemento fique sempre visível (enquadramento automático)
-            const lastMsg = chatContainer.lastElementChild;
-            if (lastMsg) {
-                lastMsg.scrollIntoView({ behavior: 'smooth', block: 'end' });
-            }
+        function autoScroll() {
+            // Rola para o typing ou para a última mensagem com folga
+            chatContainer.scrollTo({
+                top: chatContainer.scrollHeight + 100,
+                behavior: 'smooth'
+            });
         }
 
         function displayOptions(opts) {
@@ -220,7 +228,7 @@
                 };
                 inputArea.appendChild(btn);
             });
-            scrollToBottom();
+            autoScroll();
         }
 
         // --- Game Logic ---
@@ -257,7 +265,6 @@
                 if (b <= 0) {
                     b = 0; clearInterval(jumpInterval);
                     p.style.bottom = '0px';
-                    // Pequeno delay para a animação de impacto terminar antes de voltar a andar
                     setTimeout(() => {
                         isJumping = false;
                         p.classList.remove('jumping'); p.classList.add('walking');
@@ -289,7 +296,7 @@
                     }
                 }
 
-                if (pos > 600) {
+                if (pos > window.innerWidth + 50) {
                     clearInterval(move); obs.remove(); obsCount++;
                     if (obsCount >= 10) { gameActive = false; changeScreen('game-wrapper', 'final-screen'); }
                     else { setTimeout(spawnObs, Math.random() * 800 + 700); }
