@@ -13,7 +13,6 @@
             height: 100vh; width: 100vw;
         }
 
-        /* --- Container das Telas (Centralização Garantida) --- */
         .screen { 
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             display: none; flex-direction: column; align-items: center; justify-content: center;
@@ -28,55 +27,64 @@
             background-color: #f5f5dc; color: black; border-radius: 50px; transition: 0.3s;
         }
 
-        /* --- Chat --- */
-        #chat-wrapper { max-width: 500px; width: 95%; margin: 0 auto; height: 100%; }
-        #chat-container { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; width: 100%; height: 70vh; scroll-behavior: smooth; margin-top: 50px; }
+        /* --- Chat Centralizado --- */
+        #chat-wrapper { width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; }
+        #chat-container { 
+            width: 100%; max-width: 500px; height: 75vh; 
+            overflow-y: auto; padding: 20px; 
+            display: flex; flex-direction: column; 
+            scroll-behavior: smooth; margin: 0 auto;
+        }
         #chat-container::-webkit-scrollbar { width: 0px; }
-        #anchor { height: 100px; width: 100%; flex-shrink: 0; }
         
-        .message { margin-bottom: 20px; display: flex; opacity: 0; animation: fadeInMsg 0.5s forwards; }
+        .message { margin-bottom: 20px; display: flex; opacity: 0; animation: fadeInMsg 0.5s forwards; width: 100%; }
         .msg-left { justify-content: flex-start; }
         .msg-right { justify-content: flex-end; }
         .bubble-left { background: #1a1a1a; color: #f5f5dc; padding: 14px 20px; border-radius: 20px 20px 20px 0; max-width: 80%; }
         .bubble-right { background: #f5f5dc; color: black; padding: 14px 20px; border-radius: 20px 20px 0 20px; max-width: 80%; }
-        #input-area { height: 120px; display: flex; align-items: center; justify-content: center; width: 100%; border-top: 1px solid #eee; background: white; }
+        
+        #input-area { height: 120px; width: 100%; max-width: 500px; display: flex; align-items: center; justify-content: center; border-top: 1px solid #eee; background: white; margin: 0 auto; }
         .option-chip { background: #f5f5dc; padding: 14px 28px; border-radius: 30px; cursor: pointer; border: 1px solid #ddd; }
 
         /* --- Jogo --- */
-        #game-wrapper { width: 100vw; height: 100vh; background: #fff; overflow: hidden; justify-content: flex-end; }
-        #game-stage { width: 100%; height: 400px; position: relative; overflow: hidden; }
-        #ground { width: 100vw; height: 30vh; background: #000; position: relative; z-index: 20; }
+        #game-wrapper { width: 100vw; height: 100vh; background: #fff; overflow: hidden; display: flex; flex-direction: column; }
+        #game-stage { width: 100%; flex: 1; position: relative; overflow: hidden; display: flex; align-items: flex-end; }
+        #ground { width: 100vw; height: 15vh; background: #000; z-index: 20; position: relative; }
 
         #player { position: absolute; bottom: 0; left: 15%; width: 70px; height: 70px; z-index: 25; transform-origin: bottom center; }
-        .obstacle { position: absolute; bottom: 0; right: -150px; width: 100px; height: 100px; z-index: 22; }
         
+        /* Obstáculo Jelly */
+        .obstacle { 
+            position: absolute; bottom: 0; right: -150px; width: 90px; height: 90px; z-index: 22; 
+            transform-origin: bottom center; animation: jellyWalk 0.6s infinite alternate ease-in-out;
+        }
+        @keyframes jellyWalk {
+            0% { transform: scale(1.1, 0.85); }
+            100% { transform: scale(0.9, 1.1); }
+        }
+
         .cloud { position: absolute; opacity: 0.15; z-index: 1; pointer-events: none; }
         .sparkle { position: absolute; background: #000; border-radius: 50%; pointer-events: none; z-index: 5; }
 
-        @keyframes fall { 0% { transform: translateY(-50px); opacity: 0; } 20% { opacity: 0.6; } 100% { transform: translateY(110vh); opacity: 0; } }
+        @keyframes fall { 0% { transform: translateY(-50px); opacity: 0; } 100% { transform: translateY(110vh); opacity: 0; } }
 
         .walking { animation: walkElastic 0.4s infinite alternate ease-in-out; }
         @keyframes walkElastic { from { transform: rotate(-5deg); } to { transform: rotate(5deg); } }
 
         .jumping { animation: jumpCycle 0.6s forwards; }
-        @keyframes jumpCycle { 0% { transform: scale(1.6, 0.4); } 20% { transform: scale(0.7, 1.4); } 50% { transform: scale(1, 1); } 100% { transform: scale(1, 1); } }
-
-        .landed { animation: landImpact 0.25s forwards; }
-        @keyframes landImpact { 0% { transform: scale(1.7, 0.3); } 50% { transform: scale(1.2, 0.8); } 100% { transform: scale(1, 1); } }
+        @keyframes jumpCycle { 0% { transform: scale(1.6, 0.4); } 50% { transform: scale(1, 1); } 100% { transform: scale(1, 1); } }
 
         #countdown { 
-            font-size: 6rem; font-family: 'Arial Black', sans-serif; font-weight: 900;
-            position: absolute; top: 15%; left: 50%; transform: translateX(-50%); 
-            z-index: 30; color: #000; text-shadow: 4px 4px #f5f5dc;
+            font-size: 7rem; font-family: 'Arial Black', sans-serif; font-weight: 900;
+            position: absolute; top: 20%; left: 50%; transform: translateX(-50%); 
+            z-index: 30; color: #000;
         }
 
         #hit-text { position: absolute; top: -45px; left: 50%; transform: translateX(-50%); background: black; color: white; padding: 4px 12px; border-radius: 8px; font-size: 0.75rem; font-weight: bold; opacity: 0; z-index: 40; }
         .hit-effect { filter: invert(20%) sepia(100%) saturate(500%) !important; animation: vibrate 0.1s linear 3; }
         @keyframes vibrate { 0% { transform: translateX(4px); } 100% { transform: translateX(-4px); } }
 
-        #final-screen img { max-width: 85%; border: 1px solid #eee; padding: 10px; }
-
-        @keyframes fadeInMsg { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeInMsg { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
@@ -89,8 +97,7 @@
     <div id="chat-wrapper" class="screen">
         <div id="chat-container">
             <div id="chat-content"></div>
-            <div id="typing-indicator" style="display:none; font-style: italic; color: #aaa; margin-bottom: 20px;">Dorian is typing...</div>
-            <div id="anchor"></div>
+            <div id="typing-indicator" style="display:none; font-style: italic; color: #aaa; margin-bottom: 20px; width: 100%; text-align: left;">Dorian is typing...</div>
         </div>
         <div id="input-area"></div>
     </div>
@@ -108,20 +115,22 @@
 
     <div id="final-screen" class="screen">
         <h2 class="hello-text" style="font-size: 3.5rem;">For you.</h2>
-        <img src="desenho.jpg">
+        <img src="desenho.jpg" style="max-width: 85%;">
     </div>
 
     <script>
+        const chatContainer = document.getElementById('chat-container');
         const chatContent = document.getElementById('chat-content');
         const inputArea = document.getElementById('input-area');
         const typing = document.getElementById('typing-indicator');
         const pfpImg = document.getElementById('pfp-img');
         const hitLabel = document.getElementById('hit-text');
-        const anchor = document.getElementById('anchor');
         const stage = document.getElementById('game-stage');
         let isProcessing = false, gameActive = false;
 
-        const hitPhrases = ["OW!", "OUCH!", "HEY!", "STOP!", "HELP!", "T-T", "WATCH IT!"];
+        function scrollChat() {
+            chatContainer.scrollTo({ top: chatContainer.scrollHeight, behavior: 'smooth' });
+        }
 
         function changeScreen(from, to, callback) {
             const f = document.getElementById(from); const t = document.getElementById(to);
@@ -163,14 +172,14 @@
             if (idx === 'no') {
                 addBubble('right', 'no! sorry');
                 setTimeout(() => {
-                    typing.style.display = 'block'; anchor.scrollIntoView({ behavior: 'smooth' });
+                    typing.style.display = 'block'; scrollChat();
                     setTimeout(() => { typing.style.display = 'none'; addBubble('left', '...'); setTimeout(() => displayOptions([{ text: 'ugh fine', next: 7 }]), 1000); }, 1200);
                 }, 600);
                 return;
             }
             const m = script[idx]; if (!m) return;
             if (m.side === 'left') {
-                typing.style.display = 'block'; anchor.scrollIntoView({ behavior: 'smooth' });
+                typing.style.display = 'block'; scrollChat();
                 setTimeout(() => { typing.style.display = 'none'; addBubble('left', m.text); setTimeout(() => runScript(idx + 1), 700); }, Math.max(1000, m.text.length * 20));
             } else if (m.side === 'choose') { displayOptions(m.options); }
             else if (m.side === 'right_auto') { setTimeout(() => { addBubble('right', m.text); setTimeout(() => runScript(m.next), 800); }, 1600); }
@@ -179,7 +188,7 @@
         function addBubble(side, text) {
             const div = document.createElement('div'); div.className = `message msg-${side}`;
             div.innerHTML = `<div class="bubble-${side}">${text}</div>`;
-            chatContent.appendChild(div); anchor.scrollIntoView({ behavior: 'smooth' });
+            chatContent.appendChild(div); scrollChat();
         }
 
         function displayOptions(opts) {
@@ -192,8 +201,7 @@
         }
 
         function createSparkle() {
-            const s = document.createElement('div');
-            s.className = 'sparkle';
+            const s = document.createElement('div'); s.className = 'sparkle';
             const size = Math.random() * 5 + 2;
             s.style.width = size + 'px'; s.style.height = size + 'px';
             s.style.left = Math.random() * 100 + 'vw'; s.style.top = '-10px';
@@ -202,11 +210,7 @@
             document.body.appendChild(s);
             setTimeout(() => s.remove(), duration * 1000);
         }
-        setInterval(createSparkle, 120);
-
-        // --- Game ---
-        let isJumping = false, score = 0;
-        window.addEventListener('keydown', (e) => { if (gameActive && (e.code === 'Space' || e.key === 'w' || e.key === 'ArrowUp')) { e.preventDefault(); playerJump(); } });
+        setInterval(createSparkle, 150);
 
         function startCountdown() {
             let count = 3; const cd = document.getElementById('countdown');
@@ -235,14 +239,13 @@
         function playerJump() {
             if (isJumping || !gameActive) return;
             isJumping = true; const p = document.getElementById('player');
-            p.classList.remove('walking', 'landed'); p.classList.add('jumping');
+            p.classList.remove('walking'); p.classList.add('jumping');
             let b = 0, v = 22, g = 1.1; 
             const jumpInterval = setInterval(() => {
                 v -= g; b += v;
                 if (b <= 0) {
                     b = 0; clearInterval(jumpInterval); p.style.bottom = '0px';
-                    p.classList.remove('jumping'); p.classList.add('landed');
-                    setTimeout(() => { p.classList.remove('landed'); p.classList.add('walking'); isJumping = false; }, 250);
+                    p.classList.remove('jumping'); p.classList.add('walking'); isJumping = false;
                 }
                 p.style.bottom = b + 'px';
             }, 20);
@@ -252,27 +255,26 @@
             if (!gameActive) return;
             let groupSize = Math.floor(Math.random() * 2) + 1; 
             for(let i = 0; i < groupSize; i++) { setTimeout(() => createObstacle(), i * 400); }
-            setTimeout(spawnObs, Math.random() * 1200 + 1000);
+            setTimeout(spawnObs, Math.random() * 1500 + 1000);
         }
 
         function createObstacle() {
             if(!gameActive) return;
             const obs = document.createElement('div'); obs.className = 'obstacle';
-            obs.innerHTML = `<img src="obj.png" width="100">`; stage.appendChild(obs);
+            obs.innerHTML = `<img src="obj.png" width="90">`; stage.appendChild(obs);
             let pos = -150;
             const move = setInterval(() => {
                 if (!gameActive) { clearInterval(move); obs.remove(); return; }
                 pos += 14; obs.style.right = pos + 'px';
                 const pRect = document.getElementById('pfp-img').getBoundingClientRect();
                 const oRect = obs.getBoundingClientRect();
-                if (oRect.left < pRect.right - 20 && oRect.right > pRect.left + 20 && oRect.top < pRect.bottom - 10) {
+                if (oRect.left < pRect.right - 25 && oRect.right > pRect.left + 25 && oRect.top < pRect.bottom - 10) {
                     if (!pfpImg.classList.contains('hit-effect')) {
-                        pfpImg.classList.add('hit-effect'); hitLabel.innerText = hitPhrases[Math.floor(Math.random()*hitPhrases.length)];
+                        pfpImg.classList.add('hit-effect'); hitLabel.innerText = "OW!";
                         hitLabel.style.opacity = "1"; setTimeout(() => { pfpImg.classList.remove('hit-effect'); hitLabel.style.opacity = "0"; }, 400);
                     }
                 }
-                if (pos > window.innerWidth + 200) {
-                    clearInterval(move); obs.remove(); score++;
+                if (pos > window.innerWidth + 200) { clearInterval(move); obs.remove(); score++;
                     if (score >= 35) { gameActive = false; setTimeout(() => changeScreen('game-wrapper', 'final-screen'), 500); }
                 }
             }, 20);
