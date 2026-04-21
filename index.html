@@ -16,7 +16,7 @@
         .screen { 
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             display: none; flex-direction: column; align-items: center; justify-content: center;
-            opacity: 0; transition: opacity 0.8s ease-in-out; 
+            opacity: 0; transition: opacity 1s ease-in-out; 
             z-index: 1; pointer-events: none;
         }
 
@@ -27,13 +27,14 @@
         /* --- Chat --- */
         #chat-wrapper { width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; }
         #chat-container { width: 100%; max-width: 500px; height: 75vh; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; scroll-behavior: smooth; margin: 0 auto; pointer-events: all; }
+        #chat-container::-webkit-scrollbar { width: 0px; }
         .message { margin-bottom: 20px; display: flex; opacity: 0; animation: fadeInMsg 0.5s forwards; width: 100%; }
         .msg-left { justify-content: flex-start; }
         .msg-right { justify-content: flex-end; }
         .bubble-left { background: #1a1a1a; color: #f5f5dc; padding: 14px 20px; border-radius: 20px 20px 20px 0; max-width: 85%; }
         .bubble-right { background: #f5f5dc; color: black; padding: 14px 20px; border-radius: 20px 20px 0 20px; max-width: 85%; }
         #input-area { height: 100px; width: 100%; max-width: 500px; display: flex; align-items: center; justify-content: center; border-top: 1px solid #eee; background: white; margin: 0 auto; pointer-events: all; }
-        .option-chip { background: #f5f5dc; padding: 14px 28px; border-radius: 30px; cursor: pointer; border: 1px solid #ddd; }
+        .option-chip { background: #f5f5dc; padding: 12px 24px; border-radius: 30px; cursor: pointer; border: 1px solid #ddd; margin: 5px; }
 
         /* --- Jogo --- */
         #game-wrapper { width: 100vw; height: 100vh; background: #fff; overflow: hidden; display: flex; flex-direction: column; }
@@ -43,21 +44,26 @@
         .obstacle { position: absolute; bottom: 0; right: -60px; width: 50px; height: 50px; z-index: 22; transform-origin: bottom center; animation: jellyWalk 0.6s infinite alternate ease-in-out; }
         @keyframes jellyWalk { 0% { transform: scale(1.2, 0.8); } 100% { transform: scale(0.8, 1.2); } }
         
-        /* Overlay de Texto do Jogo */
+        .cloud { position: absolute; opacity: 0.15; z-index: 1; pointer-events: none; }
         #game-text-overlay {
-            position: absolute; top: 30%; width: 80%; left: 10%; text-align: center;
+            position: absolute; top: 25%; width: 80%; left: 10%; text-align: center;
             font-size: 1.1rem; color: #1a1a1a; z-index: 50; line-height: 1.6;
-            pointer-events: none; transition: opacity 1s; opacity: 0;
+            pointer-events: none; transition: opacity 1.5s; opacity: 0;
         }
 
-        #white-out { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; z-index: 200; display: none; opacity: 0; transition: opacity 2s; }
+        #white-out { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; z-index: 200; display: none; opacity: 0; transition: opacity 3s; }
 
+        /* Animações Player */
         .walking { animation: walkElastic 0.4s infinite alternate ease-in-out; }
         @keyframes walkElastic { from { transform: rotate(-10deg); } to { transform: rotate(10deg); } }
         .jumping { animation: jumpStretch 0.5s forwards; }
         @keyframes jumpStretch { 0% { transform: scale(1, 1); } 50% { transform: scale(0.8, 1.3); } 100% { transform: scale(1, 1); } }
-        .landed { animation: landImpact 0.2s forwards; }
-        @keyframes landImpact { 0% { transform: scale(1.6, 0.4); } 100% { transform: scale(1, 1); } }
+        .landed { animation: landImpact 0.25s forwards; }
+        @keyframes landImpact { 
+            0% { transform: scale(1.7, 0.3); } 
+            50% { transform: scale(1.2, 0.8); }
+            100% { transform: scale(1, 1); } 
+        }
 
         #countdown { font-size: 5rem; font-family: 'Arial Black', sans-serif; position: absolute; top: 15%; left: 50%; transform: translateX(-50%); z-index: 30; color: #000; }
         #hit-text { position: absolute; top: -35px; left: 50%; transform: translateX(-50%); background: black; color: white; padding: 2px 8px; border-radius: 5px; font-size: 0.6rem; opacity: 0; z-index: 40; }
@@ -66,9 +72,9 @@
 
         /* Final Screen */
         #final-screen { background: white; z-index: 210; }
-        .nana-text { font-family: 'Cormorant Upright', serif; font-size: 2.2rem; font-style: italic; margin-top: 10px; }
-        .drawing-img { max-width: 85%; height: auto; border: 1px solid #eee; margin: 20px 0; opacity: 0; transition: opacity 1.5s; }
-        .final-btn { background: #1a1a1a; color: white; border: none; padding: 15px 30px; border-radius: 5px; cursor: pointer; text-decoration: none; font-size: 0.9rem; margin-top: 20px; display: none; }
+        .nana-text { font-family: 'Cormorant Upright', serif; font-size: 2.5rem; font-style: italic; margin: 15px 0; }
+        .drawing-img { max-width: 85%; height: auto; border: 1px solid #eee; margin: 20px 0; opacity: 0; transition: opacity 2.5s ease; }
+        .final-btn { background: #1a1a1a; color: white; border: none; padding: 15px 30px; border-radius: 5px; cursor: pointer; text-decoration: none; font-size: 0.9rem; margin-top: 20px; display: none; opacity: 0; transition: 1.5s; }
 
         @keyframes fadeInMsg { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
     </style>
@@ -103,9 +109,9 @@
     </div>
 
     <div id="final-screen" class="screen">
-        <div id="final-text-content" style="text-align: center; padding: 20px;"></div>
+        <div id="final-text-content" style="text-align: center; padding: 20px; max-width: 500px;"></div>
         <img src="desenho.jpg" id="final-drawing" class="drawing-img">
-        <div id="final-subtext" style="font-size: 0.9rem; color: #666; margin-bottom: 20px; opacity: 0;"></div>
+        <div id="final-subtext" style="font-size: 0.95rem; color: #555; margin-bottom: 20px; opacity: 0; transition: 2s; padding: 0 20px; text-align: center;"></div>
         <a href="LINK_DO_DRIVE_AQUI" target="_blank" id="drive-btn" class="final-btn">click here to download the drawing from drive.</a>
     </div>
 
@@ -118,28 +124,102 @@
         const hitLabel = document.getElementById('hit-text');
         const gameOverlay = document.getElementById('game-text-overlay');
         const stage = document.getElementById('game-stage');
-        let gameActive = false, isJumping = false, score = 0;
+        let gameActive = false, isJumping = false;
 
         function changeScreen(from, to, callback) {
             const f = document.getElementById(from); const t = document.getElementById(to);
             f.style.opacity = '0'; f.style.pointerEvents = 'none';
             setTimeout(() => { f.style.display = 'none'; t.style.display = 'flex';
-                setTimeout(() => { t.style.opacity = '1'; t.style.pointerEvents = 'all'; t.style.zIndex = '100'; if (callback) callback(); }, 50);
-            }, 800);
+                setTimeout(() => { t.style.opacity = '1'; t.style.pointerEvents = 'all'; t.style.zIndex = '100'; if (callback) callback(); }, 100);
+            }, 1000);
         }
 
-        const script = [
-            { side: 'left', text: 'Clara' },
-            { side: 'left', text: 'I know I said I wouldn’t talk to you anymore' },
-            { side: 'left', text: 'but, can I talk to you?' },
-            { side: 'choose', options: [{ text: 'ugh fine', next: 4 }] },
-            { side: 'left', text: 'thank you…' },
-            { side: 'left', text: 'I wanted to apologize' },
-            { side: 'left', text: 'I miss having you as a friend' },
-            { side: 'left', text: 'can I entertain you for a bit?' },
-            { side: 'right_auto', text: 'I guess lol', next: 'game' }
-        ];
+        // Lógica de Diálogos Completa
+        function startChat() {
+            typeLeft("Clara", () => {
+                typeLeft("I know I said I wouldn’t talk to you anymore", () => {
+                    typeLeft("I’m lowkey about to have nightmares imagining you seeing this...", () => {
+                        typeLeft("but, can I talk to you?", () => {
+                            showOptions([
+                                { text: "ugh fine", action: startApology },
+                                { text: "no! sorry", action: handleNo }
+                            ]);
+                        });
+                    });
+                });
+            });
+        }
 
+        function handleNo() {
+            addBubble("right", "no! sorry");
+            setTimeout(() => {
+                typing.style.display = 'block';
+                setTimeout(() => {
+                    typing.style.display = 'none';
+                    addBubble("left", "...");
+                    setTimeout(() => {
+                        addBubble("left", "please? it will be quick");
+                        showOptions([{ text: "ugh fine", action: startApology }]);
+                    }, 1000);
+                }, 1500);
+            }, 500);
+        }
+
+        function startApology() {
+            addBubble("right", "ugh fine");
+            typeLeft("thank you…", () => {
+                typeLeft("I wanted to apologize", () => {
+                    setTimeout(() => {
+                        addBubble("right", "again?");
+                        setTimeout(() => {
+                            typeLeft("stop, you know me :(", () => {
+                                typeLeft("I miss having you as a friend", () => {
+                                    typeLeft("and talking to you every day", () => {
+                                        typeLeft("I wanted to update you on everything", () => {
+                                            typeLeft("and know how you’ve been too", () => {
+                                                typeLeft("if you got into college, your days, my days...", () => {
+                                                    typeLeft("can I entertain you for a bit?", () => {
+                                                        showOptions([{ text: "I guess lol", action: () => changeScreen('chat-wrapper', 'game-wrapper', startCountdown) }]);
+                                                    });
+                                                });
+                                            });
+                                        });
+                                    });
+                                });
+                            });
+                        }, 1000);
+                    }, 1000);
+                });
+            });
+        }
+
+        // Helper para o chat
+        function typeLeft(text, callback) {
+            typing.style.display = 'block';
+            chatContainer.scrollTo(0, chatContainer.scrollHeight);
+            setTimeout(() => {
+                typing.style.display = 'none';
+                addBubble("left", text);
+                if(callback) callback();
+            }, 1500);
+        }
+
+        function addBubble(side, text) {
+            const div = document.createElement('div'); div.className = `message msg-${side}`;
+            div.innerHTML = `<div class="bubble-${side}">${text}</div>`;
+            chatContent.appendChild(div); chatContainer.scrollTo(0, chatContainer.scrollHeight);
+        }
+
+        function showOptions(opts) {
+            inputArea.innerHTML = '';
+            opts.forEach(o => {
+                const btn = document.createElement('div'); btn.className = 'option-chip'; btn.innerText = o.text;
+                btn.onclick = () => { inputArea.innerHTML = ''; o.action(); };
+                inputArea.appendChild(btn);
+            });
+        }
+
+        // --- Jogo ---
         const gameFrases = [
             "Clara, yeah, I put this here just so you’d keep taking damage lol but don’t worry, the game keeps going and you can’t die, you’re just gonna stay there complaining in the corner.",
             "I’m kinda losing it rn. I wasn’t being dramatic when I said I was doing really bad, I messed up with you and if you really are dating someone, you and your boyfriend will probably think this is awful...",
@@ -154,32 +234,6 @@
             "Dorian Langley."
         ];
 
-        function startChat() { runScript(0); }
-        function runScript(idx) {
-            if (idx === 'game') { changeScreen('chat-wrapper', 'game-wrapper', startCountdown); return; }
-            const m = script[idx]; if (!m) return;
-            if (m.side === 'left') {
-                typing.style.display = 'block'; chatContainer.scrollTo(0, chatContainer.scrollHeight);
-                setTimeout(() => { typing.style.display = 'none'; addBubble('left', m.text); setTimeout(() => runScript(idx + 1), 1000); }, 1500);
-            } else if (m.side === 'choose') { displayOptions(m.options); }
-            else if (m.side === 'right_auto') { setTimeout(() => { addBubble('right', m.text); setTimeout(() => runScript(m.next), 800); }, 1500); }
-        }
-
-        function addBubble(side, text) {
-            const div = document.createElement('div'); div.className = `message msg-${side}`;
-            div.innerHTML = `<div class="bubble-${side}">${text}</div>`;
-            chatContent.appendChild(div); chatContainer.scrollTo(0, chatContainer.scrollHeight);
-        }
-
-        function displayOptions(opts) {
-            inputArea.innerHTML = '';
-            opts.forEach(o => {
-                const btn = document.createElement('div'); btn.className = 'option-chip'; btn.innerText = o.text;
-                btn.onclick = () => { inputArea.innerHTML = ''; addBubble('right', o.text); runScript(o.next); };
-                inputArea.appendChild(btn);
-            });
-        }
-
         function startCountdown() {
             let count = 3; const cd = document.getElementById('countdown');
             const timer = setInterval(() => {
@@ -192,42 +246,55 @@
         function startGame() { 
             gameActive = true; 
             spawnObs(); 
+            setInterval(spawnCloud, 2500);
             setTimeout(() => showGameText(0), 2000); 
         }
 
+        function spawnCloud() {
+            if(!gameActive) return;
+            const cloud = document.createElement('img'); cloud.src = 'obj-cloud.png'; cloud.className = 'cloud';
+            cloud.style.width = (Math.random() * 60 + 80) + 'px'; cloud.style.top = (Math.random() * 150 + 20) + 'px';
+            cloud.style.right = '-150px'; stage.appendChild(cloud);
+            let pos = -150; let speed = Math.random() * 0.8 + 1.2;
+            const moveCloud = setInterval(() => {
+                if(!gameActive) { clearInterval(moveCloud); cloud.remove(); return; }
+                pos += speed; cloud.style.right = pos + 'px';
+                if (pos > window.innerWidth + 150) { clearInterval(moveCloud); cloud.remove(); }
+            }, 20);
+        }
+
         function showGameText(idx) {
-            if (idx >= gameFrases.length) { endGameSequence(); return; }
+            if (idx >= gameFrases.length) { setTimeout(endGameSequence, 2000); return; }
             gameOverlay.innerText = gameFrases[idx];
             gameOverlay.style.opacity = 1;
             setTimeout(() => {
                 gameOverlay.style.opacity = 0;
-                setTimeout(() => showGameText(idx + 1), 1000);
-            }, 6000); // 6 segundos cada frase
+                setTimeout(() => showGameText(idx + 1), 1500);
+            }, 6500);
         }
 
         function endGameSequence() {
             const wo = document.getElementById('white-out');
             wo.style.display = 'block';
-            setTimeout(() => { wo.style.opacity = 1; 
-                setTimeout(() => { 
-                    gameActive = false;
-                    showFinalScreen();
-                }, 2000);
+            setTimeout(() => { 
+                wo.style.opacity = 1; 
+                setTimeout(showFinalScreen, 3500);
             }, 100);
         }
 
         function showFinalScreen() {
             const final = document.getElementById('final-screen');
             const textContent = document.getElementById('final-text-content');
-            final.style.display = 'flex'; final.style.opacity = 1;
+            final.style.display = 'flex'; 
+            final.style.opacity = 1;
 
             setTimeout(() => {
-                textContent.innerHTML = `<p style="opacity:0; transition:2s" id="f1">you thought it was just this kinda low-effort site? nuh uh. I don’t show up empty-handed</p>`;
-                setTimeout(() => document.getElementById('f1').style.opacity = 1, 100);
+                textContent.innerHTML = `<p style="opacity:0; transition:2.5s; font-size:1.1rem;" id="f1">you thought it was just this kinda low-effort site? nuh uh. I don’t show up empty-handed</p>`;
+                setTimeout(() => document.getElementById('f1').style.opacity = 1, 500);
                 
                 setTimeout(() => {
-                    textContent.innerHTML += `<p class="nana-text" style="opacity:0; transition:2s" id="f2">for you, Nana fan.</p>`;
-                    setTimeout(() => document.getElementById('f2').style.opacity = 1, 100);
+                    textContent.innerHTML += `<p class="nana-text" style="opacity:0; transition:2.5s" id="f2">for you, Nana fan.</p>`;
+                    setTimeout(() => document.getElementById('f2').style.opacity = 1, 500);
                     
                     setTimeout(() => {
                         document.getElementById('final-drawing').style.opacity = 1;
@@ -235,11 +302,13 @@
                             const sub = document.getElementById('final-subtext');
                             sub.innerText = "I think I should’ve made your hair longer… and idk if you’d even wear this outfit";
                             sub.style.opacity = 1;
-                            document.getElementById('drive-btn').style.display = 'inline-block';
-                        }, 2000);
-                    }, 2500);
-                }, 4000);
-            }, 1000);
+                            const btn = document.getElementById('drive-btn');
+                            btn.style.display = 'inline-block';
+                            setTimeout(() => btn.style.opacity = 1, 500);
+                        }, 3000);
+                    }, 3000);
+                }, 4500);
+            }, 1500);
         }
 
         function playerJump() {
@@ -252,7 +321,7 @@
                 if (b <= 0) {
                     b = 0; clearInterval(jumpInterval); p.style.bottom = '0px';
                     p.classList.remove('jumping'); p.classList.add('landed');
-                    setTimeout(() => { p.classList.remove('landed'); p.classList.add('walking'); isJumping = false; }, 200);
+                    setTimeout(() => { p.classList.remove('landed'); p.classList.add('walking'); isJumping = false; }, 250);
                 }
                 p.style.bottom = b + 'px';
             }, 20);
@@ -261,7 +330,7 @@
         function spawnObs() {
             if (!gameActive) return;
             createObstacle();
-            setTimeout(spawnObs, Math.random() * 2000 + 1000);
+            setTimeout(spawnObs, Math.random() * 2000 + 1200);
         }
 
         function createObstacle() {
