@@ -44,42 +44,44 @@
         .option-chip { background: #f5f5dc; padding: 14px 28px; border-radius: 30px; cursor: pointer; border: 1px solid #ddd; }
         .typing { font-style: italic; color: #aaa; font-size: 0.85rem; padding: 10px 0; margin-left: 20px; display: none; }
 
-        /* --- Jogo Centralizado --- */
-        #game-wrapper { justify-content: center; height: 100vh; }
+        /* --- Jogo --- */
         #game-stage { 
             width: 100vw; height: 350px; border-bottom: 4px solid #1a1a1a; 
             position: relative; overflow: hidden; background: #fff;
+            display: flex; align-items: flex-end;
         }
         #player { position: absolute; bottom: 0; left: 15%; width: 70px; height: 70px; z-index: 10; transform-origin: bottom center; }
         
-        /* Balão de Fala do Player */
         #hit-text {
-            position: absolute; top: -40px; left: 50%; transform: translateX(-50%);
-            background: black; color: white; padding: 4px 10px; border-radius: 10px;
-            font-size: 0.8rem; font-weight: bold; opacity: 0; transition: 0.2s; white-space: nowrap;
+            position: absolute; top: -45px; left: 50%; transform: translateX(-50%);
+            background: black; color: white; padding: 4px 12px; border-radius: 8px;
+            font-size: 0.75rem; font-weight: bold; opacity: 0; transition: 0.1s; white-space: nowrap; z-index: 20;
         }
 
         .walking { animation: walkElastic 0.4s infinite alternate ease-in-out; }
         @keyframes walkElastic { from { transform: rotate(-5deg); } to { transform: rotate(5deg); } }
 
-        .jumping { animation: jumpSoft 0.7s ease-out; }
-        @keyframes jumpSoft {
-            0% { transform: scale(1.4, 0.6); }
-            100% { transform: scale(1.4, 0.6); } /* Impacto ao cair */
+        /* O Pulo Legal que Amassa */
+        .jumping { animation: jumpElastic 0.7s cubic-bezier(0.4, 0, 0.2, 1); }
+        @keyframes jumpElastic {
+            0% { transform: scale(1.6, 0.4); }   /* Amassa no chão */
+            30% { transform: scale(0.7, 1.4); }  /* Estica subindo */
+            50% { transform: scale(1, 1); }      /* Normal no topo */
+            90% { transform: scale(0.8, 1.2); }  /* Prepara queda */
+            100% { transform: scale(1.6, 0.4); } /* Amassa no impacto */
         }
 
-        /* Obstáculos Flutuantes */
         .obstacle { 
-            position: absolute; bottom: 20px; right: -100px; 
-            width: 70px; height: 70px;
-            animation: floatMove 1.5s infinite alternate ease-in-out; 
+            position: absolute; bottom: 15px; right: -100px; 
+            width: 85px; height: 85px;
+            animation: floaty 0.8s infinite alternate ease-in-out; 
         }
-        @keyframes floatMove { from { transform: translateY(0); } to { transform: translateY(-10px); } }
+        @keyframes floaty { from { transform: translateY(0) scale(1); } to { transform: translateY(-10px) scale(1.05); } }
 
-        .hit-effect { filter: sepia(1) saturate(15) hue-rotate(-50deg) !important; animation: vibrate 0.1s linear infinite; }
-        @keyframes vibrate { 0% { transform: translateX(3px); } 100% { transform: translateX(-3px); } }
+        .hit-effect { filter: invert(20%) sepia(100%) saturate(500%) !important; animation: vibrate 0.1s linear 3; }
+        @keyframes vibrate { 0% { transform: translateX(4px); } 100% { transform: translateX(-4px); } }
 
-        #countdown { font-size: 8rem; font-family: 'Cormorant Upright'; position: absolute; top: 15%; left: 50%; transform: translateX(-50%); z-index: 10; }
+        #countdown { font-size: 8rem; font-family: 'Cormorant Upright'; position: absolute; top: 15%; left: 50%; transform: translateX(-50%); z-index: 5; }
         @keyframes fadeInMsg { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
@@ -124,7 +126,7 @@
         const anchor = document.getElementById('anchor');
         let isProcessing = false;
 
-        const hitPhrases = ["OW!", "OUCH!", "HEY!", "STOP!", "HELP!", "OUCHIE!", "T-T"];
+        const hitPhrases = ["OW!", "OUCH!", "HEY!", "STOP!", "HELP!", "OUCHIE!", "T-T", "RUDE!", "WATCH IT!"];
 
         function changeScreen(from, to, callback) {
             const f = document.getElementById(from);
@@ -225,7 +227,7 @@
             });
         }
 
-        // --- Game Logic ---
+        // --- Jogo ---
         let gameActive = false, isJumping = false, obsCount = 0;
 
         window.addEventListener('keydown', (e) => {
@@ -253,7 +255,7 @@
             const p = document.getElementById('player');
             p.classList.remove('walking'); p.classList.add('jumping');
             
-            let b = 0, v = 16, g = 0.85; 
+            let b = 0, v = 17.5, g = 0.92; 
             const jumpInterval = setInterval(() => {
                 v -= g; b += v;
                 if (b <= 0) {
@@ -273,24 +275,22 @@
             const stage = document.getElementById('game-stage');
             const obs = document.createElement('div');
             obs.className = 'obstacle';
-            obs.innerHTML = `<img src="obj.png" width="70">`;
+            obs.innerHTML = `<img src="obj.png" width="85">`;
             stage.appendChild(obs);
 
             let pos = -100;
             const move = setInterval(() => {
                 if (!gameActive) { clearInterval(move); obs.remove(); return; }
-                pos += 10; obs.style.right = pos + 'px';
+                pos += 12; obs.style.right = pos + 'px';
 
                 const pRect = document.getElementById('player').getBoundingClientRect();
                 const oRect = obs.getBoundingClientRect();
                 
                 if (oRect.left < pRect.right - 25 && oRect.right > pRect.left + 25 && oRect.top < pRect.bottom - 15) {
                     if (!pfpImg.classList.contains('hit-effect')) {
-                        // Feedback de hit
                         pfpImg.classList.add('hit-effect');
                         hitLabel.innerText = hitPhrases[Math.floor(Math.random()*hitPhrases.length)];
                         hitLabel.style.opacity = "1";
-                        
                         setTimeout(() => {
                             pfpImg.classList.remove('hit-effect');
                             hitLabel.style.opacity = "0";
@@ -298,13 +298,13 @@
                     }
                 }
 
-                if (pos > window.innerWidth + 100) {
+                if (pos > window.innerWidth + 120) {
                     clearInterval(move); obs.remove(); obsCount++;
-                    if (obsCount >= 15) { 
+                    if (obsCount >= 20) { 
                         gameActive = false; 
                         setTimeout(() => changeScreen('game-wrapper', 'final-screen'), 500); 
                     }
-                    else { setTimeout(spawnObs, Math.random() * 400 + 150); }
+                    else { setTimeout(spawnObs, Math.random() * 300 + 100); } // Mais rápido e frenético
                 }
             }, 20);
         }
