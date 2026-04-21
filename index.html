@@ -35,19 +35,26 @@
         .bubble-right { background: #f5f5dc; color: black; padding: 14px 20px; border-radius: 20px 20px 0 20px; max-width: 80%; }
         #input-area { height: 120px; display: flex; align-items: center; justify-content: center; width: 100%; border-top: 1px solid #eee; background: white; z-index: 100; }
         .option-chip { background: #f5f5dc; padding: 14px 28px; border-radius: 30px; cursor: pointer; border: 1px solid #ddd; }
-        .typing { font-style: italic; color: #aaa; font-size: 0.85rem; padding: 10px 0; margin-left: 20px; display: none; }
 
-        /* --- Jogo --- */
+        /* --- Jogo com Chão Preto --- */
         #game-stage { 
-            width: 100vw; height: 380px; border-bottom: 4px solid #1a1a1a; 
-            position: relative; overflow: hidden; background: #fff;
+            width: 100vw; height: 400px; 
+            position: relative; overflow: hidden; 
+            background: linear-gradient(to bottom, #fff 80%, #000 80%); /* Chão totalmente preto */
             display: flex; align-items: flex-end;
         }
-        #player { position: absolute; bottom: 0; left: 15%; width: 70px; height: 70px; z-index: 10; transform-origin: bottom center; }
+        #player { position: absolute; bottom: 20%; left: 15%; width: 70px; height: 70px; z-index: 10; transform-origin: bottom center; }
         #hit-text { position: absolute; top: -45px; left: 50%; transform: translateX(-50%); background: black; color: white; padding: 4px 12px; border-radius: 8px; font-size: 0.75rem; font-weight: bold; opacity: 0; transition: 0.1s; white-space: nowrap; z-index: 20; }
 
-        /* Nuvens Maiores */
         .cloud { position: absolute; opacity: 0.15; z-index: 1; pointer-events: none; }
+
+        /* Brilhos (Sparkles) */
+        .sparkle { position: absolute; background: #000; border-radius: 50%; pointer-events: none; z-index: 0; }
+        @keyframes fall { 
+            0% { transform: translateY(-50px) rotate(0deg); opacity: 0; }
+            20% { opacity: 0.6; }
+            100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+        }
 
         .walking { animation: walkElastic 0.4s infinite alternate ease-in-out; }
         @keyframes walkElastic { from { transform: rotate(-5deg); } to { transform: rotate(5deg); } }
@@ -58,12 +65,16 @@
         .landed { animation: landImpact 0.25s forwards; }
         @keyframes landImpact { 0% { transform: scale(1.7, 0.3); } 50% { transform: scale(1.2, 0.8); } 100% { transform: scale(1, 1); } }
 
-        .obstacle { position: absolute; bottom: 18px; right: -100px; width: 75px; height: 75px; z-index: 5; }
+        .obstacle { position: absolute; bottom: calc(20% + 15px); right: -100px; width: 75px; height: 75px; z-index: 5; }
         
         .hit-effect { filter: invert(20%) sepia(100%) saturate(500%) !important; animation: vibrate 0.1s linear 3; }
-        @keyframes vibrate { 0% { transform: translateX(4px); } 100% { transform: translateX(-4px); } }
 
-        #countdown { font-size: 8rem; font-family: 'Cormorant Upright'; position: absolute; top: 15%; left: 50%; transform: translateX(-50%); z-index: 2; }
+        /* Fonte da Contagem mais "Game" */
+        #countdown { 
+            font-size: 6rem; font-family: 'Arial Black', sans-serif; font-weight: 900;
+            position: absolute; top: 15%; left: 50%; transform: translateX(-50%); 
+            z-index: 2; color: #000; text-shadow: 4px 4px #f5f5dc;
+        }
         @keyframes fadeInMsg { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
@@ -77,7 +88,7 @@
     <div id="chat-wrapper">
         <div id="chat-container">
             <div id="chat-content"></div>
-            <div id="typing-indicator" class="typing">Dorian is typing...</div>
+            <div id="typing-indicator" style="display:none; font-style: italic; color: #aaa; margin-left: 20px;">Dorian is typing...</div>
             <div id="anchor"></div>
         </div>
         <div id="input-area"></div>
@@ -99,7 +110,6 @@
     </div>
 
     <script>
-        const chatContainer = document.getElementById('chat-container');
         const chatContent = document.getElementById('chat-content');
         const inputArea = document.getElementById('input-area');
         const typing = document.getElementById('typing-indicator');
@@ -108,6 +118,7 @@
         const anchor = document.getElementById('anchor');
         const stage = document.getElementById('game-stage');
         let isProcessing = false;
+        let gameActive = false;
 
         const hitPhrases = ["OW!", "OUCH!", "HEY!", "STOP!", "HELP!", "T-T", "WATCH IT!"];
 
@@ -123,7 +134,7 @@
         const script = [
             { side: 'left', text: 'Clara' },
             { side: 'left', text: 'I know I said I wouldn’t talk to you anymore' },
-            { side: 'left', text: 'I’m lowkey about to have nightmares just imagining the sigh you’re gonna let out seeing I sent you this link…' },
+            { side: 'left', text: 'I’m lowkey about to have nightmares imagining you seeing this...' },
             { side: 'left', text: 'but, can I talk to you?' },
             { side: 'choose', options: [{ text: 'ugh fine', next: 7 }, { text: 'no! sorry', next: 'no' }] },
             { side: 'left', text: '...' },
@@ -179,8 +190,27 @@
             });
         }
 
-        // --- Game ---
-        let gameActive = false, isJumping = false, score = 0;
+        // --- Sparkle Rain (Chuva de Brilhos) ---
+        function createSparkle() {
+            const s = document.createElement('div');
+            s.className = 'sparkle';
+            const size = Math.random() * 5 + 2;
+            s.style.width = size + 'px';
+            s.style.height = size + 'px';
+            s.style.left = Math.random() * 100 + 'vw';
+            s.style.top = '-10px';
+            
+            // Se o jogo estiver ativo, cai como chuva. Se não, flutua levemente.
+            const duration = gameActive ? (Math.random() * 2 + 1) : (Math.random() * 5 + 3);
+            s.style.animation = `fall ${duration}s linear forwards`;
+            
+            document.body.appendChild(s);
+            setTimeout(() => s.remove(), duration * 1000);
+        }
+        setInterval(createSparkle, 150);
+
+        // --- Game Logic ---
+        let isJumping = false, score = 0;
 
         window.addEventListener('keydown', (e) => { if (gameActive && (e.code === 'Space' || e.key === 'w' || e.key === 'ArrowUp')) { e.preventDefault(); playerJump(); } });
 
@@ -204,7 +234,7 @@
             const cloud = document.createElement('img');
             cloud.src = 'obj-cloud.png';
             cloud.className = 'cloud';
-            cloud.style.width = (Math.random() * 120 + 130) + 'px'; // Aumentei o tamanho aqui
+            cloud.style.width = (Math.random() * 120 + 130) + 'px';
             cloud.style.top = (Math.random() * 80 + 10) + 'px';
             cloud.style.right = '-200px';
             stage.appendChild(cloud);
@@ -227,23 +257,20 @@
             const jumpInterval = setInterval(() => {
                 v -= g; b += v;
                 if (b <= 0) {
-                    b = 0; clearInterval(jumpInterval); p.style.bottom = '0px';
+                    b = 0; clearInterval(jumpInterval); p.style.bottom = '20%';
                     p.classList.remove('jumping'); p.classList.add('landed');
                     setTimeout(() => { p.classList.remove('landed'); p.classList.add('walking'); isJumping = false; }, 250);
                 }
-                p.style.bottom = b + 'px';
+                p.style.bottom = (20 + (b/stage.offsetHeight)*100) + '%';
             }, 20);
         }
 
         function spawnObs() {
             if (!gameActive) return;
-            
-            // Limitado a no máximo 2 obstáculos por grupo
             let groupSize = Math.floor(Math.random() * 2) + 1; 
             for(let i = 0; i < groupSize; i++) {
-                setTimeout(() => createObstacle(), i * 320); // Delay levemente maior entre eles para ser justo
+                setTimeout(() => createObstacle(), i * 320);
             }
-
             let nextSpawn = Math.random() * 1200 + 900; 
             setTimeout(spawnObs, nextSpawn);
         }
@@ -258,7 +285,7 @@
             let pos = -100;
             const move = setInterval(() => {
                 if (!gameActive) { clearInterval(move); obs.remove(); return; }
-                pos += 11.5; obs.style.right = pos + 'px';
+                pos += 12.5; obs.style.right = pos + 'px';
 
                 const pRect = document.getElementById('player').getBoundingClientRect();
                 const oRect = obs.getBoundingClientRect();
@@ -274,7 +301,7 @@
 
                 if (pos > window.innerWidth + 120) {
                     clearInterval(move); obs.remove(); score++;
-                    if (score >= 40) { gameActive = false; setTimeout(() => changeScreen('game-wrapper', 'final-screen'), 500); }
+                    if (score >= 35) { gameActive = false; setTimeout(() => changeScreen('game-wrapper', 'final-screen'), 500); }
                 }
             }, 20);
         }
