@@ -3,157 +3,181 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>A Sincere Message</title>
+    <title>For You</title>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Upright:wght@300;500&family=Raleway:wght@200;400&display=swap" rel="stylesheet">
     <style>
-        body { margin: 0; background: white; font-family: 'Raleway', sans-serif; overflow-x: hidden; color: #333; }
-        
-        /* Estilo da Caligrafia */
-        .chique { font-family: 'Cormorant Upright', serif; font-size: 3rem; text-align: center; margin-top: 50px; }
+        body { 
+            margin: 0; 
+            background: white; 
+            font-family: 'Raleway', sans-serif; 
+            overflow: hidden; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            height: 100vh;
+            flex-direction: column;
+            transition: background 0.5s ease;
+        }
 
-        /* Container do Jogo */
+        /* Tela Inicial */
+        #start-screen { text-align: center; z-index: 10; transition: opacity 1s; }
+        
+        .hello-text { 
+            font-family: 'Cormorant Upright', serif; 
+            font-size: 4rem; 
+            margin-bottom: 30px;
+            color: #1a1a1a;
+        }
+
+        .btn-click {
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            border: none;
+            cursor: pointer;
+            background-color: #f5f5dc; /* Bege */
+            color: black;
+            font-family: 'Raleway', sans-serif;
+            transition: all 0.3s ease;
+            border-radius: 2px;
+        }
+
+        .btn-click:active {
+            background-color: black;
+            color: #f5f5dc;
+        }
+
+        /* Jogo e Conteúdo (Escondidos no início) */
+        #main-content { 
+            display: none; 
+            width: 100%; 
+            flex-direction: column; 
+            align-items: center; 
+            opacity: 0; 
+            transition: opacity 2s; 
+        }
+
         #game-container {
             width: 100%;
             height: 300px;
-            border-bottom: 2px solid #000;
+            border-bottom: 1px solid #ddd;
             position: relative;
             background: #fff;
             overflow: hidden;
-            cursor: pointer;
+            margin-top: 50px;
         }
-
-        #player {
-            width: 50px; height: 50px;
-            position: absolute; bottom: 0; left: 100px;
-            transition: background 0.2s;
-            z-index: 2;
-        }
-
-        #chaser {
-            width: 45px; height: 45px;
-            position: absolute; bottom: 0; left: 20px;
-            opacity: 0.7;
-        }
-
-        .obstacle {
-            width: 40px; height: 40px;
-            position: absolute; bottom: 0; right: -50px;
-        }
-
-        #speech-bubble {
-            position: absolute; top: 50px; width: 100%;
-            text-align: center; font-style: italic; font-size: 1.2rem;
-            color: #666; height: 30px;
-        }
-
-        .hit { filter: invert(27%) sepia(91%) saturate(2352%) hue-rotate(346deg) brightness(104%) contrast(97%); }
 
         /* Sparkles */
-        .sparkle { position: absolute; width: 3px; height: 3px; background: gold; border-radius: 50%; pointer-events: none; }
+        .sparkle {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background: #d4af37;
+            border-radius: 50%;
+            pointer-events: none;
+            animation: floatUp 4s linear forwards;
+        }
 
-        .hidden { display: none; }
-        #final-section { text-align: center; padding: 50px; opacity: 0; transition: opacity 2s; }
-        img.desenho { max-width: 80%; border: 1px solid #ddd; padding: 10px; background: #fff; }
+        @keyframes floatUp {
+            0% { transform: translateY(0); opacity: 0; }
+            20% { opacity: 0.6; }
+            80% { opacity: 0.6; }
+            100% { transform: translateY(-70vh); opacity: 0; }
+        }
+
+        /* Personagens */
+        #player, #chaser { position: absolute; bottom: 0; }
+        #player { left: 120px; z-index: 2; }
+        #chaser { left: 20px; opacity: 0.6; }
+        .obstacle { position: absolute; bottom: 0; right: -50px; }
+        #speech-bubble { font-style: italic; color: #888; margin-bottom: 10px; height: 20px; }
+
+        .hidden { display: none !important; }
     </style>
 </head>
 <body>
 
-    <div class="chique">A Sincere Message</div>
-    <div id="speech-bubble">Click or Tap to Jump!</div>
+    <div id="start-screen">
+        <div class="hello-text">hello</div>
+        <button class="btn-click" onclick="startExperience()">click me</button>
+    </div>
 
-    <div id="game-container" onclick="jump()">
-        <div id="chaser"><img src="ele.png" width="50"></div> <div id="player"><img src="ela.png" width="50" id="player-img"></div> </div>
-
-    <div id="final-section">
-        <p id="apology-text" style="max-width: 600px; margin: 0 auto 30px; line-height: 1.6; font-size: 1.1rem;"></p>
-        <img src="desenho.jpg" class="desenho">
+    <div id="main-content">
+        <div id="speech-bubble"></div>
+        <div id="game-container" onclick="jump()">
+            <div id="chaser"><img src="ele.png" width="50" onerror="this.style.display='none'"></div>
+            <div id="player"><img src="ela.png" width="50" id="player-img" onerror="this.style.display='none'"></div>
+        </div>
     </div>
 
     <script>
-        const player = document.getElementById('player');
-        const playerImg = document.getElementById('player-img');
-        const bubble = document.getElementById('speech-bubble');
-        const finalSection = document.getElementById('final-section');
-        
-        let isJumping = false;
-        let frame = 0;
-        const phrases = ["Wait!", "I'm so sorry...", "Don't run away!", "Ouch!", "My bad!", "I can explain!"];
+        // Função para criar os sparkles lentamente de baixo para cima
+        function createSparkle() {
+            const sparkle = document.createElement('div');
+            sparkle.className = 'sparkle';
+            sparkle.style.left = Math.random() * 100 + 'vw';
+            sparkle.style.bottom = "-10px"; // Começa fora da tela embaixo
+            document.body.appendChild(sparkle);
+            
+            setTimeout(() => { sparkle.remove(); }, 4000);
+        }
 
+        // Inicia a criação constante e lenta de sparkles
+        setInterval(createSparkle, 500);
+
+        function startExperience() {
+            // 1. Esconde a tela inicial
+            document.getElementById('start-screen').style.opacity = '0';
+            
+            setTimeout(() => {
+                document.getElementById('start-screen').classList.add('hidden');
+                
+                // 2. Mostra o conteúdo principal com fade in
+                const main = document.getElementById('main-content');
+                main.style.display = 'flex';
+                setTimeout(() => {
+                    main.style.opacity = '1';
+                    startGameLoop(); // Inicia o jogo
+                }, 100);
+                
+                // Aqui entrará o fade-in da música no futuro
+                console.log("Music starts now...");
+            }, 1000);
+        }
+
+        // --- Lógica Simples do Jogo ---
+        let isJumping = false;
         function jump() {
             if (isJumping) return;
             isJumping = true;
+            let p = document.getElementById('player');
             let pos = 0;
-            let timer = setInterval(() => {
+            let up = setInterval(() => {
                 if (pos >= 120) {
-                    clearInterval(timer);
-                    let downTimer = setInterval(() => {
-                        if (pos <= 0) {
-                            clearInterval(downTimer);
-                            isJumping = false;
-                        }
-                        pos -= 5;
-                        player.style.bottom = pos + 'px';
+                    clearInterval(up);
+                    let down = setInterval(() => {
+                        if (pos <= 0) { clearInterval(down); isJumping = false; }
+                        pos -= 5; p.style.bottom = pos + 'px';
                     }, 20);
                 }
-                pos += 5;
-                player.style.bottom = pos + 'px';
+                pos += 5; p.style.bottom = pos + 'px';
             }, 20);
         }
 
-        function createObstacle() {
-            frame++;
-            const obs = document.createElement('div');
-            obs.classList.add('obstacle');
-            obs.innerHTML = `<img src="obstaculo.png" width="40">`;
-            document.getElementById('game-container').appendChild(obs);
+        function startGameLoop() {
+            setInterval(() => {
+                const obs = document.createElement('div');
+                obs.className = 'obstacle';
+                obs.innerHTML = `<img src="obstaculo.png" width="40" onerror="this.parentElement.style.background='red'; this.parentElement.style.width='20px';">`;
+                document.getElementById('game-container').appendChild(obs);
 
-            let obsPos = window.innerWidth;
-            let obsTimer = setInterval(() => {
-                obsPos -= 7;
-                obs.style.right = (window.innerWidth - obsPos) + 'px';
-
-                // Checar Colisão (Simplificada)
-                let playerLeft = 100;
-                let obsCurrentLeft = obsPos;
-                if (obsCurrentLeft > 100 && obsCurrentLeft < 150 && parseInt(player.style.bottom) < 40) {
-                    playerImg.classList.add('hit');
-                    bubble.innerText = "Ouch! I'm sorry!";
-                    setTimeout(() => playerImg.classList.remove('hit'), 500);
-                }
-
-                if (obsPos < -50) {
-                    clearInterval(obsTimer);
-                    obs.remove();
-                }
-                
-                // Mudar frases aleatoriamente
-                if (frame % 100 == 0) bubble.innerText = phrases[Math.floor(Math.random() * phrases.length)];
-                
-                // Após 15 obstáculos, libera o final
-                if (frame > 15) {
-                    clearInterval(obsTimer);
-                    showFinal();
-                }
-            }, 20);
+                let obsPos = window.innerWidth;
+                let move = setInterval(() => {
+                    obsPos -= 6;
+                    obs.style.right = (window.innerWidth - obsPos) + 'px';
+                    if (obsPos < -50) { clearInterval(move); obs.remove(); }
+                }, 20);
+            }, 3000);
         }
-
-        function showFinal() {
-            document.getElementById('game-container').classList.add('hidden');
-            bubble.classList.add('hidden');
-            finalSection.style.opacity = "1";
-            document.getElementById('apology-text').innerText = "Everything I wanted to say is that I value us more than any mistake. This drawing is for you...";
-        }
-
-        setInterval(createObstacle, 3000);
-
-        // Sparkles Effect
-        document.addEventListener('mousemove', (e) => {
-            const s = document.createElement('div');
-            s.className = 'sparkle';
-            s.style.left = e.pageX + 'px'; s.style.top = e.pageY + 'px';
-            document.body.appendChild(s);
-            setTimeout(() => s.remove(), 1000);
-        });
     </script>
 </body>
 </html>
