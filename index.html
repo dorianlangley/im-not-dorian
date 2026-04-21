@@ -4,179 +4,296 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>For You</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Upright:wght@300;500&family=Raleway:wght@200;400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Upright:wght@300;500&family=Raleway:wght@200;300;400&display=swap" rel="stylesheet">
     <style>
         body { 
-            margin: 0; 
-            background: white; 
-            font-family: 'Raleway', sans-serif; 
-            overflow: hidden; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            height: 100vh;
-            flex-direction: column;
-            transition: background 0.5s ease;
+            margin: 0; background: white; font-family: 'Raleway', sans-serif; 
+            overflow: hidden; display: flex; justify-content: center; align-items: center; 
+            height: 100vh; flex-direction: column; transition: background 0.5s ease;
         }
 
-        /* Tela Inicial */
-        #start-screen { text-align: center; z-index: 10; transition: opacity 1s; }
+        /* --- Tela 1: O Início --- */
+        #start-screen { text-align: center; z-index: 10; transition: opacity 1s; display: flex; flex-direction: column; align-items: center; }
         
         .hello-text { 
-            font-family: 'Cormorant Upright', serif; 
-            font-size: 4rem; 
-            margin-bottom: 30px;
-            color: #1a1a1a;
+            font-family: 'Cormorant Upright', serif; font-size: 5rem; 
+            margin-bottom: 40px; color: #1a1a1a; opacity: 0; animation: fadeIn 2s forwards;
         }
 
-        .btn-click {
-            padding: 15px 40px;
-            font-size: 1.2rem;
-            border: none;
-            cursor: pointer;
+        .btn-start {
+            padding: 18px 50px; font-size: 1.1rem; border: 1px solid #1a1a1a; cursor: pointer;
             background-color: #f5f5dc; /* Bege */
-            color: black;
-            font-family: 'Raleway', sans-serif;
-            transition: all 0.3s ease;
-            border-radius: 2px;
+            color: black; font-family: 'Raleway', sans-serif; letter-spacing: 2px;
+            transition: all 0.4s ease; border-radius: 50px; /* Mais bonitinho/arredondado */
         }
 
-        .btn-click:active {
-            background-color: black;
-            color: #f5f5dc;
+        .btn-start:hover { background-color: #e6e6cc; }
+        .btn-start:active { background-color: black; color: #f5f5dc; scale: 0.98; }
+
+        /* --- Tela 2: O Chat --- */
+        #chat-container {
+            display: none; width: 90%; max-width: 600px; height: 80vh;
+            flex-direction: column; opacity: 0; transition: opacity 1.5s;
+            overflow-y: scroll; padding: 20px; scroll-behavior: smooth;
         }
 
-        /* Jogo e Conteúdo (Escondidos no início) */
-        #main-content { 
-            display: none; 
-            width: 100%; 
-            flex-direction: column; 
-            align-items: center; 
-            opacity: 0; 
-            transition: opacity 2s; 
+        /* Esconder scrollbar */
+        #chat-container::-webkit-scrollbar { display: none; }
+
+        .message { margin-bottom: 20px; display: flex; opacity: 0; animation: fadeInMsg 0.5s forwards; }
+        
+        /* Mensagens Dele (Lado Esquerdo, Balão Preto) */
+        .msg-left { justify-content: flex-start; }
+        .bubble-left { 
+            background: #1a1a1a; color: #f5f5dc; 
+            padding: 15px 20px; border-radius: 20px 20px 20px 0px;
+            max-width: 70%; font-weight: 300; line-height: 1.5;
         }
 
-        #game-container {
-            width: 100%;
-            height: 300px;
-            border-bottom: 1px solid #ddd;
-            position: relative;
-            background: #fff;
-            overflow: hidden;
-            margin-top: 50px;
+        /* Mensagens Dela (Lado Direito, Balão Bege) */
+        .msg-right { justify-content: flex-end; }
+        .bubble-right { 
+            background: #f5f5dc; color: black; 
+            padding: 15px 20px; border-radius: 20px 20px 0px 20px;
+            max-width: 70%; font-weight: 400; line-height: 1.5;
+            cursor: pointer; transition: scale 0.2s;
         }
 
-        /* Sparkles */
+        /* Botões de Decisão dela (na Bubble Right) */
+        .chat-option { display: block; margin-bottom: 10px; padding: 10px; text-decoration: underline; color: black; cursor: pointer; }
+        .chat-option:hover { color: #555; }
+
+        /* Efeitos */
+        .typing { font-style: italic; color: #888; font-size: 0.9rem; margin-left: 10px; margin-bottom: 10px; display: none; }
+        .shake { animation: shakeBtn 0.5s; animation-iteration-count: infinite; border-color: red; }
+        
+        @keyframes fadeInMsg { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes shakeBtn { 0% { transform: translateX(0); } 25% { transform: translateX(5px); } 50% { transform: translateX(0); } 75% { transform: translateX(-5px); } 100% { transform: translateX(0); } }
+
+        /* --- Tela 3: O Desenho --- */
+        #final-screen { display: none; text-align: center; opacity: 0; transition: opacity 2s; z-index: 10; }
+        img.desenho { max-width: 80%; border: 1px solid #ddd; padding: 10px; background: #fff; margin-top: 20px; }
+
+        /* --- Brilhos Pretos --- */
         .sparkle {
-            position: absolute;
-            width: 3px;
-            height: 3px;
-            background: #d4af37;
-            border-radius: 50%;
-            pointer-events: none;
-            animation: floatUp 4s linear forwards;
+            position: absolute; width: 3px; height: 3px; 
+            background: black; border-radius: 50%; pointer-events: none;
+            opacity: 0; animation: floatUp 5s linear forwards;
         }
 
         @keyframes floatUp {
-            0% { transform: translateY(0); opacity: 0; }
-            20% { opacity: 0.6; }
-            80% { opacity: 0.6; }
-            100% { transform: translateY(-70vh); opacity: 0; }
+            0% { transform: translateY(100vh); opacity: 0; }
+            10% { opacity: 0.5; }
+            70% { opacity: 0.5; }
+            90% { transform: translateY(30vh); opacity: 0; }
+            100% { transform: translateY(30vh); opacity: 0; }
         }
 
-        /* Personagens */
-        #player, #chaser { position: absolute; bottom: 0; }
-        #player { left: 120px; z-index: 2; }
-        #chaser { left: 20px; opacity: 0.6; }
-        .obstacle { position: absolute; bottom: 0; right: -50px; }
-        #speech-bubble { font-style: italic; color: #888; margin-bottom: 10px; height: 20px; }
-
         .hidden { display: none !important; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
 <body>
 
     <div id="start-screen">
         <div class="hello-text">hello</div>
-        <button class="btn-click" onclick="startExperience()">click me</button>
+        <button class="btn-start" onclick="startExperience()">click me</button>
     </div>
 
-    <div id="main-content">
-        <div id="speech-bubble"></div>
-        <div id="game-container" onclick="jump()">
-            <div id="chaser"><img src="ele.png" width="50" onerror="this.style.display='none'"></div>
-            <div id="player"><img src="ela.png" width="50" id="player-img" onerror="this.style.display='none'"></div>
-        </div>
+    <div id="chat-container">
+        <div id="chat-content"></div>
+        <div id="typing-indicator" class="typing">Clara is typing...</div>
+    </div>
+
+    <div id="final-screen">
+        <div class="hello-text" style="font-size: 2.5rem;">For you.</div>
+        <img src="desenho.jpg" class="desenho" onerror="this.src='https://via.placeholder.com/400x300?text=Your+Drawing+Here'">
     </div>
 
     <script>
-        // Função para criar os sparkles lentamente de baixo para cima
+        const chatContent = document.getElementById('chat-content');
+        const typingIndicator = document.getElementById('typing-indicator');
+
+        // Função para os Sparkles Pretos (aparecem só depois do clique)
+        let sparklesInterval;
         function createSparkle() {
             const sparkle = document.createElement('div');
             sparkle.className = 'sparkle';
             sparkle.style.left = Math.random() * 100 + 'vw';
-            sparkle.style.bottom = "-10px"; // Começa fora da tela embaixo
             document.body.appendChild(sparkle);
-            
-            setTimeout(() => { sparkle.remove(); }, 4000);
+            setTimeout(() => { sparkle.remove(); }, 5000);
         }
 
-        // Inicia a criação constante e lenta de sparkles
-        setInterval(createSparkle, 500);
-
         function startExperience() {
-            // 1. Esconde a tela inicial
+            // Esconde Capa
             document.getElementById('start-screen').style.opacity = '0';
-            
             setTimeout(() => {
                 document.getElementById('start-screen').classList.add('hidden');
                 
-                // 2. Mostra o conteúdo principal com fade in
-                const main = document.getElementById('main-content');
-                main.style.display = 'flex';
+                // Mostra Chat e começa brilhos
+                const chat = document.getElementById('chat-container');
+                chat.style.display = 'flex';
                 setTimeout(() => {
-                    main.style.opacity = '1';
-                    startGameLoop(); // Inicia o jogo
+                    chat.style.opacity = '1';
+                    // Inicia sparkles pretos lentamente
+                    sparklesInterval = setInterval(createSparkle, 700);
+                    // Começa a primeira mensagem dele
+                    showHeSays(0); 
                 }, 100);
                 
-                // Aqui entrará o fade-in da música no futuro
-                console.log("Music starts now...");
+                // Futuro: Música fade-in
+                console.log("Music starts...");
             }, 1000);
         }
 
-        // --- Lógica Simples do Jogo ---
-        let isJumping = false;
-        function jump() {
-            if (isJumping) return;
-            isJumping = true;
-            let p = document.getElementById('player');
-            let pos = 0;
-            let up = setInterval(() => {
-                if (pos >= 120) {
-                    clearInterval(up);
-                    let down = setInterval(() => {
-                        if (pos <= 0) { clearInterval(down); isJumping = false; }
-                        pos -= 5; p.style.bottom = pos + 'px';
-                    }, 20);
-                }
-                pos += 5; p.style.bottom = pos + 'px';
-            }, 20);
+        // --- A Estrutura do Diálogo ---
+        const dialogueData = [
+            // [0] Ele fala
+            { type: 'he', text: 'Clara' },
+            { type: 'he', text: 'I know I said I wouldn’t talk to you anymore' },
+            { type: 'he', text: 'I’m lowkey about to have nightmares just imagining the sigh you’re gonna let out seeing I sent you this link…' },
+            { type: 'he', text: 'but, can I talk to you?' },
+            // [4] Ela decide
+            { type: 'she', options: [
+                { text: 'ugh fine', next: 7 }, // Pula pro [7]
+                { text: 'no! sorry', next: 'no' } // Mostra o `...`
+            ] },
+            // [5] Ele espera (...) se ela disser não
+            { type: 'he', text: '...' },
+            // [6] Ele força a opção 'ugh fine'
+            { type: 'force_she', text: 'ugh fine', next: 7 },
+            // [7] Ele segue
+            { type: 'he', text: 'thank you…' },
+            { type: 'he', text: 'I wanted to apologize' },
+            // [9] Ela fala (sozinha uns segundos depois)
+            { type: 'she_solo', text: 'again?', next: 11 },
+            // [10] Ele segue
+            { type: 'he', text: 'stop, you know me :(' },
+            { type: 'he', text: 'I miss having you as a friend' },
+            { type: 'he', text: 'and talking to you every day' },
+            { type: 'he', text: 'I wanted to update you on everything' },
+            { type: 'he', text: 'and know how you’ve been too' },
+            { type: 'he', text: 'if you got into college' },
+            { type: 'he', text: 'your days' },
+            { type: 'he', text: 'my days…' },
+            { type: 'he', text: 'can I entertain you for a bit?' },
+            // [19] Ela encerra
+            { type: 'she_solo', text: 'I guess lol', next: 'final' }
+        ];
+
+        let currentStep = 0;
+
+        function showHeSays(step) {
+            currentStep = step;
+            if (currentStep >= dialogueData.length) return;
+
+            const data = dialogueData[currentStep];
+
+            if (data.type === 'he') {
+                typingIndicator.style.display = 'block';
+                // Tempo de digitação baseado no tamanho do texto
+                setTimeout(() => {
+                    typingIndicator.style.display = 'none';
+                    appendMessage('left', data.text);
+                    // Passa para o próximo
+                    setTimeout(() => {
+                        showHeSays(currentStep + 1);
+                    }, 1000); // Espaço entre balões
+                }, data.text.length * 50); // Simula digitação
+            } else {
+                // Chegou na vez dela
+                showSheDecides(currentStep);
+            }
         }
 
-        function startGameLoop() {
-            setInterval(() => {
-                const obs = document.createElement('div');
-                obs.className = 'obstacle';
-                obs.innerHTML = `<img src="obstaculo.png" width="40" onerror="this.parentElement.style.background='red'; this.parentElement.style.width='20px';">`;
-                document.getElementById('game-container').appendChild(obs);
+        function showSheDecides(step) {
+            const data = dialogueData[step];
+            // Balão bege do lado direito com opções
+            const msgDiv = document.createElement('div');
+            msgDiv.className = 'message msg-right';
+            const bubble = document.createElement('div');
+            bubble.className = 'bubble-right';
 
-                let obsPos = window.innerWidth;
-                let move = setInterval(() => {
-                    obsPos -= 6;
-                    obs.style.right = (window.innerWidth - obsPos) + 'px';
-                    if (obsPos < -50) { clearInterval(move); obs.remove(); }
-                }, 20);
-            }, 3000);
+            if (data.type === 'she') {
+                data.options.forEach(opt => {
+                    const span = document.createElement('span');
+                    span.className = 'chat-option';
+                    span.innerText = opt.text;
+                    span.id = `opt-${opt.text.replace(/\s/g, '')}`; // ID único
+                    span.onclick = () => sheClicked(opt.next);
+                    bubble.appendChild(span);
+                });
+            } else if (data.type === 'she_solo') {
+                // Mensagem dela que aparece sozinha (again?, I guess lol)
+                setTimeout(() => {
+                    typingIndicator.style.display = 'none';
+                    appendMessage('right', data.text, () => sheClicked(data.next));
+                }, 2000); // 2 segs de espera antes dela "responder"
+                return; // Pula o append normal
+            } else if (data.type === 'force_she') {
+                // Força o botão a tremer se ela disser 'no'
+                setTimeout(() => {
+                    const shakeBtn = document.getElementById('opt-ughfine');
+                    shakeBtn.classList.add('shake');
+                    bubble.appendChild(shakeBtn);
+                }, 2000); // Segundos depois só
+            }
+
+            msgDiv.appendChild(bubble);
+            chatContent.appendChild(msgDiv);
+            scrollToBottom();
+        }
+
+        function sheClicked(nextStep) {
+            // Remove opções antigas se existirem
+            const oldOptions = document.querySelectorAll('.chat-option');
+            oldOptions.forEach(opt => opt.onclick = null);
+
+            if (nextStep === 'no') {
+                // Ela disse não: mostra o `...` dele e depois força
+                showHeSays(5); 
+                setTimeout(() => {
+                    // Força a opção 1 a tremer
+                    const ughFineBtn = document.getElementById('opt-ughfine');
+                    if (ughFineBtn) ughFineBtn.classList.add('shake');
+                }, 3000);
+            } else if (nextStep === 'final') {
+                // Fim do chat
+                goToFinal();
+            } else {
+                // Segue o diálogo normal
+                showHeSays(nextStep);
+            }
+        }
+
+        function appendMessage(side, text, callback) {
+            const msgDiv = document.createElement('div');
+            msgDiv.className = `message msg-${side}`;
+            const bubble = document.createElement('div');
+            bubble.className = `bubble-${side}`;
+            bubble.innerText = text;
+            if (callback) bubble.onclick = callback;
+            msgDiv.appendChild(bubble);
+            chatContent.appendChild(msgDiv);
+            scrollToBottom();
+        }
+
+        function scrollToBottom() {
+            document.getElementById('chat-container').scrollTop = document.getElementById('chat-container').scrollHeight;
+        }
+
+        function goToFinal() {
+            // Esconde Chat
+            document.getElementById('chat-container').style.opacity = '0';
+            setTimeout(() => {
+                document.getElementById('chat-container').classList.add('hidden');
+                // Mostra Desenho
+                const final = document.getElementById('final-screen');
+                final.style.display = 'block';
+                setTimeout(() => {
+                    final.style.opacity = '1';
+                }, 100);
+            }, 1500);
         }
     </script>
 </body>
