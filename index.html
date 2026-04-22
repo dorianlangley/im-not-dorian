@@ -24,7 +24,7 @@
         .hello-text { font-family: 'Cormorant Upright', serif; font-size: 3.5rem; color: #1a1a1a; margin-bottom: 40px; text-align: center; }
         .btn-start { padding: 18px 50px; font-size: 1.1rem; border: 1px solid #1a1a1a; cursor: pointer; background-color: #f5f5dc; color: black; border-radius: 50px; transition: 0.3s; position: relative; z-index: 110; pointer-events: all; }
 
-        /* --- Chat --- */
+        /* --- Chat UI --- */
         #chat-wrapper { width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; }
         #chat-container { width: 100%; max-width: 500px; height: 75vh; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; scroll-behavior: smooth; margin: 0 auto; pointer-events: all; }
         #chat-container::-webkit-scrollbar { width: 0px; }
@@ -36,7 +36,7 @@
         #input-area { height: 100px; width: 100%; max-width: 500px; display: flex; align-items: center; justify-content: center; border-top: 1px solid #eee; background: white; margin: 0 auto; pointer-events: all; }
         .option-chip { background: #f5f5dc; padding: 12px 24px; border-radius: 30px; cursor: pointer; border: 1px solid #ddd; margin: 5px; }
 
-        /* --- Jogo --- */
+        /* --- Game UI --- */
         #game-wrapper { width: 100vw; height: 100vh; background: #fff; overflow: hidden; display: flex; flex-direction: column; }
         #game-stage { width: 100%; flex: 1; position: relative; overflow: hidden; display: flex; align-items: flex-end; pointer-events: all; }
         #ground { width: 100%; height: 20vh; background: #000; z-index: 20; position: relative; }
@@ -53,7 +53,7 @@
 
         #white-out { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; z-index: 200; display: none; opacity: 0; transition: opacity 3.5s ease-in; }
 
-        /* Animações Player */
+        /* Player Animations */
         .walking { animation: walkElastic 0.4s infinite alternate ease-in-out; }
         @keyframes walkElastic { from { transform: rotate(-10deg); } to { transform: rotate(10deg); } }
         .jumping { animation: jumpStretch 0.5s forwards; }
@@ -66,7 +66,7 @@
         .hit-effect { filter: grayscale(1) contrast(200%); animation: vibrate 0.1s linear 2; }
         @keyframes vibrate { 0% { transform: translateX(3px); } 100% { transform: translateX(-3px); } }
 
-        /* Final Screen */
+        /* Final Screen UI */
         #final-screen { background: white; z-index: 210; padding: 20px 0; }
         .nana-text { font-family: 'Cormorant Upright', serif; font-size: 2.6rem; font-style: italic; margin: 10px 0; }
         .drawing-img { 
@@ -119,9 +119,9 @@
 
     <div id="final-screen" class="screen">
         <div id="final-text-content" style="text-align: center; padding: 0 25px; max-width: 500px;"></div>
-        <img src="desenho.jpg" id="final-drawing" class="drawing-img">
+        <img src="claria_nana.jpeg" id="final-drawing" class="drawing-img">
         <div id="final-subtext" style="font-size: 0.92rem; color: #444; margin-bottom: 15px; opacity: 0; transition: 2.5s; padding: 0 30px; text-align: center; line-height: 1.4;"></div>
-        <a href="LINK_DO_DRIVE_AQUI" target="_blank" id="drive-btn" class="final-btn">click here to download from drive.</a>
+        <a href="https://drive.google.com/file/d/1YYImLyLB-FpGZiSXzdNXVak57-bs21rS/view?usp=sharing" target="_blank" id="drive-btn" class="final-btn">click here to download from drive.</a>
     </div>
 
     <script>
@@ -135,6 +135,7 @@
         const stage = document.getElementById('game-stage');
         let gameActive = false, isJumping = false;
 
+        /* General screen transition logic */
         function changeScreen(from, to, callback) {
             const f = document.getElementById(from); const t = document.getElementById(to);
             f.style.opacity = '0'; f.style.pointerEvents = 'none';
@@ -143,7 +144,7 @@
             }, 1200);
         }
 
-        // --- Chat ---
+        /* --- Chat Dialog Logic --- */
         function startChat() {
             typeLeft("Clara", () => {
                 typeLeft("I know I said I wouldn’t talk to you anymore", () => {
@@ -159,6 +160,7 @@
             });
         }
 
+        /* Logic for when the user refuses the chat */
         function handleNo() {
             addBubble("right", "no! sorry");
             setTimeout(() => {
@@ -174,6 +176,7 @@
             }, 500);
         }
 
+        /* Main apology flow before starting the game */
         function startApology() {
             addBubble("right", "ugh fine");
             typeLeft("thank you…", () => {
@@ -202,6 +205,7 @@
             });
         }
 
+        /* Helper function to simulate 'is typing' effect */
         function typeLeft(text, callback) {
             typing.style.display = 'block';
             chatContainer.scrollTo(0, chatContainer.scrollHeight);
@@ -227,7 +231,7 @@
             });
         }
 
-        // --- Game System ---
+        /* --- Game Core Logic --- */
         const gameFrases = [
             "Clara, yeah, I put this here just so you’d keep taking damage lol but don’t worry, the game keeps going and you can’t die, you’re just gonna stay there complaining in the corner.",
             "I’m kinda losing it rn. I wasn’t being dramatic when I said I was doing really bad, I messed up with you and if you really are dating someone, you and your boyfriend will probably think this is awful...",
@@ -258,6 +262,7 @@
             setTimeout(() => showGameText(0), 2000); 
         }
 
+        /* Ambient clouds spawning logic */
         function spawnCloud() {
             if(!gameActive) return;
             const cloud = document.createElement('img'); cloud.src = 'obj-cloud.png'; cloud.className = 'cloud';
@@ -271,6 +276,7 @@
             }, 20);
         }
 
+        /* Scripted text sequence during gameplay */
         function showGameText(idx) {
             if (idx >= gameFrases.length) { setTimeout(endGameSequence, 2000); return; }
             gameOverlay.innerText = gameFrases[idx];
@@ -283,6 +289,7 @@
             }, 6800);
         }
 
+        /* Transition to white screen and final surprise */
         function endGameSequence() {
             const wo = document.getElementById('white-out');
             wo.style.display = 'block';
@@ -292,6 +299,7 @@
             }, 100);
         }
 
+        /* Final screen delicate animation logic */
         function showFinalScreen() {
             const final = document.getElementById('final-screen');
             const textContent = document.getElementById('final-text-content');
@@ -329,6 +337,7 @@
             }, 1500);
         }
 
+        /* Jump physics logic */
         function playerJump() {
             if (isJumping || !gameActive) return;
             isJumping = true; const p = document.getElementById('player');
@@ -345,17 +354,17 @@
             }, 20);
         }
 
-        // Spawn em ondas
+        /* Spawning obstacles in waves for dynamic gameplay */
         function spawnWave() {
             if (!gameActive) return;
-            const count = Math.floor(Math.random() * 2) + 1; // 1 ou 2 obstáculos por onda
+            const count = Math.floor(Math.random() * 2) + 1; // 1 or 2 obstacles per wave
             for(let i = 0; i < count; i++) {
-                setTimeout(createObstacle, i * 550); // Espaçamento entre eles na onda
+                setTimeout(createObstacle, i * 550); // Gap between obstacles in the same wave
             }
-            // Tempo entre ondas (maior para respirar)
-            setTimeout(spawnWave, Math.random() * 2000 + 1500);
+            setTimeout(spawnWave, Math.random() * 2000 + 1500); // Delay between different waves
         }
 
+        /* Single obstacle logic and collision detection */
         function createObstacle() {
             if (!gameActive) return;
             const obs = document.createElement('div'); obs.className = 'obstacle';
@@ -368,6 +377,8 @@
                 pos += speed; obs.style.right = pos + 'px';
                 const pRect = pfpImg.getBoundingClientRect();
                 const oRect = obs.getBoundingClientRect();
+                
+                /* Simple bounding box collision check */
                 if (oRect.left < pRect.right - 15 && oRect.right > pRect.left + 15 && oRect.top < pRect.bottom - 5) {
                     if (!pfpImg.classList.contains('hit-effect')) {
                         pfpImg.classList.add('hit-effect'); hitLabel.style.opacity = "1";
