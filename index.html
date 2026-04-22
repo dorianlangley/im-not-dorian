@@ -16,7 +16,7 @@
         .screen { 
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             display: none; flex-direction: column; align-items: center; justify-content: center;
-            opacity: 0; transition: opacity 1s ease-in-out; 
+            opacity: 0; transition: opacity 1.2s ease-in-out; 
             z-index: 1; pointer-events: none;
         }
 
@@ -39,19 +39,19 @@
         /* --- Jogo --- */
         #game-wrapper { width: 100vw; height: 100vh; background: #fff; overflow: hidden; display: flex; flex-direction: column; }
         #game-stage { width: 100%; flex: 1; position: relative; overflow: hidden; display: flex; align-items: flex-end; pointer-events: all; }
-        #ground { width: 100%; height: 25vh; background: #000; z-index: 20; position: relative; }
+        #ground { width: 100%; height: 20vh; background: #000; z-index: 20; position: relative; }
         #player { position: absolute; bottom: 0; left: 10%; width: 45px; height: 45px; z-index: 25; transform-origin: bottom center; }
         .obstacle { position: absolute; bottom: 0; right: -60px; width: 50px; height: 50px; z-index: 22; transform-origin: bottom center; animation: jellyWalk 0.6s infinite alternate ease-in-out; }
         @keyframes jellyWalk { 0% { transform: scale(1.2, 0.8); } 100% { transform: scale(0.8, 1.2); } }
         
-        .cloud { position: absolute; opacity: 0.15; z-index: 1; pointer-events: none; }
+        .cloud { position: absolute; opacity: 0.12; z-index: 1; pointer-events: none; }
         #game-text-overlay {
-            position: absolute; top: 25%; width: 80%; left: 10%; text-align: center;
-            font-size: 1.1rem; color: #1a1a1a; z-index: 50; line-height: 1.6;
-            pointer-events: none; transition: opacity 1.5s; opacity: 0;
+            position: absolute; top: 20%; width: 85%; left: 7.5%; text-align: center;
+            font-size: 1.05rem; color: #1a1a1a; z-index: 50; line-height: 1.6;
+            pointer-events: none; transition: opacity 1.5s, transform 1.5s; opacity: 0;
         }
 
-        #white-out { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; z-index: 200; display: none; opacity: 0; transition: opacity 3s; }
+        #white-out { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; z-index: 200; display: none; opacity: 0; transition: opacity 3.5s ease-in; }
 
         /* Animações Player */
         .walking { animation: walkElastic 0.4s infinite alternate ease-in-out; }
@@ -59,11 +59,7 @@
         .jumping { animation: jumpStretch 0.5s forwards; }
         @keyframes jumpStretch { 0% { transform: scale(1, 1); } 50% { transform: scale(0.8, 1.3); } 100% { transform: scale(1, 1); } }
         .landed { animation: landImpact 0.25s forwards; }
-        @keyframes landImpact { 
-            0% { transform: scale(1.7, 0.3); } 
-            50% { transform: scale(1.2, 0.8); }
-            100% { transform: scale(1, 1); } 
-        }
+        @keyframes landImpact { 0% { transform: scale(1.7, 0.3); } 50% { transform: scale(1.2, 0.8); } 100% { transform: scale(1, 1); } }
 
         #countdown { font-size: 5rem; font-family: 'Arial Black', sans-serif; position: absolute; top: 15%; left: 50%; transform: translateX(-50%); z-index: 30; color: #000; }
         #hit-text { position: absolute; top: -35px; left: 50%; transform: translateX(-50%); background: black; color: white; padding: 2px 8px; border-radius: 5px; font-size: 0.6rem; opacity: 0; z-index: 40; }
@@ -71,10 +67,23 @@
         @keyframes vibrate { 0% { transform: translateX(3px); } 100% { transform: translateX(-3px); } }
 
         /* Final Screen */
-        #final-screen { background: white; z-index: 210; }
-        .nana-text { font-family: 'Cormorant Upright', serif; font-size: 2.5rem; font-style: italic; margin: 15px 0; }
-        .drawing-img { max-width: 85%; height: auto; border: 1px solid #eee; margin: 20px 0; opacity: 0; transition: opacity 2.5s ease; }
-        .final-btn { background: #1a1a1a; color: white; border: none; padding: 15px 30px; border-radius: 5px; cursor: pointer; text-decoration: none; font-size: 0.9rem; margin-top: 20px; display: none; opacity: 0; transition: 1.5s; }
+        #final-screen { background: white; z-index: 210; padding: 20px 0; }
+        .nana-text { font-family: 'Cormorant Upright', serif; font-size: 2.6rem; font-style: italic; margin: 10px 0; }
+        .drawing-img { 
+            max-width: 92%; 
+            max-height: 60vh;
+            height: auto; 
+            border: 1px solid #eee; 
+            margin: 15px 0; 
+            opacity: 0; 
+            filter: blur(10px);
+            transition: opacity 3s ease, filter 3s ease; 
+        }
+        .final-btn { 
+            background: #1a1a1a; color: white; border: none; padding: 16px 32px; 
+            border-radius: 50px; cursor: pointer; text-decoration: none; 
+            font-size: 0.9rem; margin-top: 15px; display: none; opacity: 0; transition: opacity 2s; 
+        }
 
         @keyframes fadeInMsg { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
     </style>
@@ -109,10 +118,10 @@
     </div>
 
     <div id="final-screen" class="screen">
-        <div id="final-text-content" style="text-align: center; padding: 20px; max-width: 500px;"></div>
+        <div id="final-text-content" style="text-align: center; padding: 0 25px; max-width: 500px;"></div>
         <img src="desenho.jpg" id="final-drawing" class="drawing-img">
-        <div id="final-subtext" style="font-size: 0.95rem; color: #555; margin-bottom: 20px; opacity: 0; transition: 2s; padding: 0 20px; text-align: center;"></div>
-        <a href="LINK_DO_DRIVE_AQUI" target="_blank" id="drive-btn" class="final-btn">click here to download the drawing from drive.</a>
+        <div id="final-subtext" style="font-size: 0.92rem; color: #444; margin-bottom: 15px; opacity: 0; transition: 2.5s; padding: 0 30px; text-align: center; line-height: 1.4;"></div>
+        <a href="LINK_DO_DRIVE_AQUI" target="_blank" id="drive-btn" class="final-btn">click here to download from drive.</a>
     </div>
 
     <script>
@@ -131,10 +140,10 @@
             f.style.opacity = '0'; f.style.pointerEvents = 'none';
             setTimeout(() => { f.style.display = 'none'; t.style.display = 'flex';
                 setTimeout(() => { t.style.opacity = '1'; t.style.pointerEvents = 'all'; t.style.zIndex = '100'; if (callback) callback(); }, 100);
-            }, 1000);
+            }, 1200);
         }
 
-        // Lógica de Diálogos Completa
+        // --- Chat ---
         function startChat() {
             typeLeft("Clara", () => {
                 typeLeft("I know I said I wouldn’t talk to you anymore", () => {
@@ -188,12 +197,11 @@
                                 });
                             });
                         }, 1000);
-                    }, 1000);
+                    }, 1200);
                 });
             });
         }
 
-        // Helper para o chat
         function typeLeft(text, callback) {
             typing.style.display = 'block';
             chatContainer.scrollTo(0, chatContainer.scrollHeight);
@@ -219,7 +227,7 @@
             });
         }
 
-        // --- Jogo ---
+        // --- Game System ---
         const gameFrases = [
             "Clara, yeah, I put this here just so you’d keep taking damage lol but don’t worry, the game keeps going and you can’t die, you’re just gonna stay there complaining in the corner.",
             "I’m kinda losing it rn. I wasn’t being dramatic when I said I was doing really bad, I messed up with you and if you really are dating someone, you and your boyfriend will probably think this is awful...",
@@ -245,17 +253,17 @@
 
         function startGame() { 
             gameActive = true; 
-            spawnObs(); 
-            setInterval(spawnCloud, 2500);
+            spawnWave(); 
+            setInterval(spawnCloud, 3000);
             setTimeout(() => showGameText(0), 2000); 
         }
 
         function spawnCloud() {
             if(!gameActive) return;
             const cloud = document.createElement('img'); cloud.src = 'obj-cloud.png'; cloud.className = 'cloud';
-            cloud.style.width = (Math.random() * 60 + 80) + 'px'; cloud.style.top = (Math.random() * 150 + 20) + 'px';
+            cloud.style.width = (Math.random() * 50 + 70) + 'px'; cloud.style.top = (Math.random() * 120 + 20) + 'px';
             cloud.style.right = '-150px'; stage.appendChild(cloud);
-            let pos = -150; let speed = Math.random() * 0.8 + 1.2;
+            let pos = -150; let speed = Math.random() * 0.7 + 1;
             const moveCloud = setInterval(() => {
                 if(!gameActive) { clearInterval(moveCloud); cloud.remove(); return; }
                 pos += speed; cloud.style.right = pos + 'px';
@@ -267,10 +275,12 @@
             if (idx >= gameFrases.length) { setTimeout(endGameSequence, 2000); return; }
             gameOverlay.innerText = gameFrases[idx];
             gameOverlay.style.opacity = 1;
+            gameOverlay.style.transform = "translateY(0)";
             setTimeout(() => {
                 gameOverlay.style.opacity = 0;
+                gameOverlay.style.transform = "translateY(-10px)";
                 setTimeout(() => showGameText(idx + 1), 1500);
-            }, 6500);
+            }, 6800);
         }
 
         function endGameSequence() {
@@ -278,7 +288,7 @@
             wo.style.display = 'block';
             setTimeout(() => { 
                 wo.style.opacity = 1; 
-                setTimeout(showFinalScreen, 3500);
+                setTimeout(showFinalScreen, 4000);
             }, 100);
         }
 
@@ -289,25 +299,33 @@
             final.style.opacity = 1;
 
             setTimeout(() => {
-                textContent.innerHTML = `<p style="opacity:0; transition:2.5s; font-size:1.1rem;" id="f1">you thought it was just this kinda low-effort site? nuh uh. I don’t show up empty-handed</p>`;
-                setTimeout(() => document.getElementById('f1').style.opacity = 1, 500);
+                textContent.innerHTML = `<p style="opacity:0; transition:3s ease; font-size:1.1rem; filter:blur(5px);" id="f1">you thought it was just this kinda low-effort site? nuh uh. I don’t show up empty-handed</p>`;
+                setTimeout(() => { 
+                    const e = document.getElementById('f1');
+                    e.style.opacity = 1; e.style.filter = "blur(0)";
+                }, 500);
                 
                 setTimeout(() => {
-                    textContent.innerHTML += `<p class="nana-text" style="opacity:0; transition:2.5s" id="f2">for you, Nana fan.</p>`;
-                    setTimeout(() => document.getElementById('f2').style.opacity = 1, 500);
+                    textContent.innerHTML += `<p class="nana-text" style="opacity:0; transition:3s ease; filter:blur(5px);" id="f2">for you, Nana fan.</p>`;
+                    setTimeout(() => {
+                        const e = document.getElementById('f2');
+                        e.style.opacity = 1; e.style.filter = "blur(0)";
+                    }, 500);
                     
                     setTimeout(() => {
-                        document.getElementById('final-drawing').style.opacity = 1;
+                        const draw = document.getElementById('final-drawing');
+                        draw.style.opacity = 1;
+                        draw.style.filter = "blur(0)";
                         setTimeout(() => {
                             const sub = document.getElementById('final-subtext');
                             sub.innerText = "I think I should’ve made your hair longer… and idk if you’d even wear this outfit";
                             sub.style.opacity = 1;
                             const btn = document.getElementById('drive-btn');
                             btn.style.display = 'inline-block';
-                            setTimeout(() => btn.style.opacity = 1, 500);
-                        }, 3000);
-                    }, 3000);
-                }, 4500);
+                            setTimeout(() => btn.style.opacity = 1, 800);
+                        }, 3500);
+                    }, 3500);
+                }, 5000);
             }, 1500);
         }
 
@@ -315,7 +333,7 @@
             if (isJumping || !gameActive) return;
             isJumping = true; const p = document.getElementById('player');
             p.classList.remove('walking', 'landed'); p.classList.add('jumping');
-            let b = 0, v = 15, g = 0.75;
+            let b = 0, v = 15.5, g = 0.78;
             const jumpInterval = setInterval(() => {
                 v -= g; b += v;
                 if (b <= 0) {
@@ -327,20 +345,27 @@
             }, 20);
         }
 
-        function spawnObs() {
+        // Spawn em ondas
+        function spawnWave() {
             if (!gameActive) return;
-            createObstacle();
-            setTimeout(spawnObs, Math.random() * 2000 + 1200);
+            const count = Math.floor(Math.random() * 2) + 1; // 1 ou 2 obstáculos por onda
+            for(let i = 0; i < count; i++) {
+                setTimeout(createObstacle, i * 550); // Espaçamento entre eles na onda
+            }
+            // Tempo entre ondas (maior para respirar)
+            setTimeout(spawnWave, Math.random() * 2000 + 1500);
         }
 
         function createObstacle() {
+            if (!gameActive) return;
             const obs = document.createElement('div'); obs.className = 'obstacle';
             const size = window.innerWidth < 600 ? 50 : 80;
             obs.innerHTML = `<img src="obj.png" width="${size}">`; stage.appendChild(obs);
             let pos = -size;
+            const speed = (window.innerWidth < 600 ? 7.5 : 11.5);
             const move = setInterval(() => {
                 if (!gameActive) { clearInterval(move); obs.remove(); return; }
-                pos += (window.innerWidth < 600 ? 7 : 11); obs.style.right = pos + 'px';
+                pos += speed; obs.style.right = pos + 'px';
                 const pRect = pfpImg.getBoundingClientRect();
                 const oRect = obs.getBoundingClientRect();
                 if (oRect.left < pRect.right - 15 && oRect.right > pRect.left + 15 && oRect.top < pRect.bottom - 5) {
